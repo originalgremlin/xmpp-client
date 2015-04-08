@@ -1,6 +1,8 @@
 # external libraries
 node_modules
-build/*
+
+# built assets
+build
 !build/Gruntfile.js
 !build/package.json
 
