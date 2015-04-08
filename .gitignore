@@ -1,0 +1,8 @@
+# external libraries
+node_modules
+build/*
+!build/Gruntfile.js
+!build/package.json
+
+# IntelliJ
+.idea

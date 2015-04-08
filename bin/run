@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
+
+"${DIR}/build/atom_shell/Atom.app/Contents/MacOS/Atom" "${DIR}/app" 1>>log/out.log 2>>log/err.log &
