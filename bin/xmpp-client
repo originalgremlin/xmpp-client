@@ -30,7 +30,6 @@ stop() {
             echo -n "."
             sleep 1
         done
-    echo
 
     if is_running $1; then
         echo "$1 not stopped. It may still be shutting down or shutdown may have failed."
@@ -44,7 +43,6 @@ stop() {
 
 case "$1" in
     install)
-        # npm install still necessary?  recursive at this point...
         grunt download-atom-shell
         gem update --system
         gem install sass compass
@@ -78,7 +76,7 @@ case "$1" in
         if ! is_running atom; then
             echo "Starting atom shell..."
             "${DIR}/build/atom_shell/Atom.app/Contents/MacOS/Atom" \
-                "${APP_DIR}" \
+                "${DIR}" \
                 >>"${LOG_DIR}/atom.out" 2>>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
         fi
@@ -88,16 +86,22 @@ case "$1" in
         # stop jsx compilation
         if is_running jsx; then
             stop jsx
+        else
+            echo "jsx not running"
         fi
 
         # stop sass/compass compilation
         if is_running compass; then
             stop compass
+        else
+            echo "compass not running"
         fi
 
         # stop atom shell
         if is_running atom; then
             stop atom
+        else
+            echo "atom not running"
         fi
     ;;
 
@@ -107,10 +111,26 @@ case "$1" in
     ;;
 
     status)
-        if is_running atom; then
-            echo "Running"
+        # stop jsx compilation
+        if is_running jsx; then
+            echo "jsx running"
         else
-            echo "Stopped"
+            echo "jsx not running"
+        fi
+
+        # stop sass/compass compilation
+        if is_running compass; then
+            echo "compass running"
+
+        else
+            echo "compass not running"
+        fi
+
+        # stop atom shell
+        if is_running atom; then
+            echo "atom running"
+        else
+            echo "atom not running"
         fi
     ;;
 
