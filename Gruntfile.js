@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         "download-atom-shell": {
             version: "0.22.3",
-            outputDir: "./atom_shell",
+            outputDir: "build/atom_shell",
             rebuild: true
         }
     });

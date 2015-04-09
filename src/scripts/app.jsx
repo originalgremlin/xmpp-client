@@ -2,6 +2,8 @@ var React = require('react'),
     XMPP = require('stanza.io'),
     _ = require('lodash');
 
+React.initializeTouchEvents(true);
+
 var CommentList = React.createClass({
     getComments: function(comments) {
         return comments.map(function(comment, index) {

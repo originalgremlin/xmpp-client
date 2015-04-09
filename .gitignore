@@ -2,10 +2,5 @@
 node_modules
 .sass-cache
 
-# built assets
-build
-!build/Gruntfile.js
-!build/package.json
-
 # IntelliJ
 .idea
