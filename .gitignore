@@ -1,5 +1,6 @@
 # external libraries
 node_modules
+.sass-cache
 
 # built assets
 build

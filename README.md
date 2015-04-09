@@ -6,6 +6,7 @@ XMPP client built on Atom Shell and React.
 
 * npm `brew install npm`
 * grunt `sudo npm install -g grunt-cli`
+* ruby `brew install ruby`
 
 
 ## One-time installation

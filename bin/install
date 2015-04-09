@@ -9,3 +9,6 @@ cd "${DIR}/build"
 
 cd "${DIR}/app"
     npm install
+
+gem update --system
+gem install sass compass
