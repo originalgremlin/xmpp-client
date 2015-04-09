@@ -1,5 +1,6 @@
 var React = require('react'),
     XMPP = require('stanza.io'),
+    config = require('./build/scripts/config.js'),
     _ = require('lodash');
 
 React.initializeTouchEvents(true);

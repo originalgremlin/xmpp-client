@@ -76,7 +76,7 @@ case "$1" in
         if ! is_running atom; then
             echo "Starting atom shell..."
             "${DIR}/build/atom_shell/Atom.app/Contents/MacOS/Atom" \
-                "${DIR}" \
+                "${DIR}" --environment=development \
                 >>"${LOG_DIR}/atom.out" 2>>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
         fi

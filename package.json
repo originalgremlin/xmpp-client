@@ -21,7 +21,7 @@
             "debug": true,
             "watch": true
         },
-        "deployment": {
+        "production": {
             "debug": false,
             "watch": false
         }
