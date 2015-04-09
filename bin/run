@@ -6,5 +6,5 @@ APP_DIR="${DIR}/app"
 LOG_DIR="${DIR}/log"
 NPM_DIR="${DIR}/app/node_modules"
 
-"${NPM_DIR}/react-tools/bin/jsx" --watch "${APP_DIR}/scripts" "${APP_DIR}/build/scripts" 1>>"${LOG_DIR}/jsx.out" 2>>"${LOG_DIR}/jsx.err" &
+"${NPM_DIR}/react-tools/bin/jsx" --watch "${APP_DIR}/src" "${APP_DIR}/build" 1>>"${LOG_DIR}/jsx.out" 2>>"${LOG_DIR}/jsx.err" &
 "${DIR}/build/atom_shell/Atom.app/Contents/MacOS/Atom" "${APP_DIR}" 1>>"${LOG_DIR}/app.out" 2>>"${LOG_DIR}/app.err" &

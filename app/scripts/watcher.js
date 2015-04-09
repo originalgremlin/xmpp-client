@@ -1,1 +1,0 @@
-require('atom-watcher')();
