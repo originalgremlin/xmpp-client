@@ -3,6 +3,7 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 BUILD_DIR="${DIR}/build"
+DIST_DIR="${BUILD_DIR}/dist"
 ETC_DIR="${DIR}/etc"
 LOG_DIR="${DIR}/var/log"
 NPM_DIR="${DIR}/node_modules"
@@ -49,9 +50,14 @@ case "$1" in
         gem install sass compass
     ;;
 
-    publish)
-        # how to compile atom shell for various platforms
-        echo "TODO"
+    package)
+        # create asar file
+        mkdir "${DIST_DIR}"
+        mkdir "${DIST_DIR}/build"
+        cp "${DIR}/index.html" "${DIR}/main.js" "${DIR}/package.json" "${DIST_DIR}"
+        cp -R  "${BUILD_DIR}/scripts" "${BUILD_DIR}/styles" "${DIST_DIR}/build"
+        "${BIN_DIR}/asar" pack "${DIST_DIR}" "${BUILD_DIR}/app.asar"
+        rm -rf "${DIST_DIR}"
     ;;
 
     start)
@@ -130,7 +136,7 @@ case "$1" in
     ;;
 
     *)
-        echo "Usage: $0 {install|publish|start|stop|restart|status}"
+        echo "Usage: $0 {install|package|start|stop|restart|status}"
         exit 1
     ;;
 esac

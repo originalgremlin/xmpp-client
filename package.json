@@ -11,7 +11,6 @@
   },
   "scripts": {
     "install": "bin/xmpp-client install",
-    "publish": "bin/xmpp-client publish",
     "start": "bin/xmpp-client start",
     "stop": "bin/xmpp-client stop",
     "restart": "bin/xmpp-client restart"
@@ -34,6 +33,7 @@
     "stanza.io": "^7.1.6"
   },
   "devDependencies": {
+    "asar": "^0.4.4",
     "atom-shell": "^0.22.3"
   },
   "private": true
