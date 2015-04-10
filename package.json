@@ -11,6 +11,7 @@
   },
   "scripts": {
     "install": "bin/xmpp-client install",
+    "package": "bin/xmpp-client package",
     "start": "bin/xmpp-client start",
     "stop": "bin/xmpp-client stop",
     "restart": "bin/xmpp-client restart"

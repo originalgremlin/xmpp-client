@@ -3,10 +3,10 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
-@import "../../../../../../usr/local/lib/ruby/gems/2.2.0/gems/compass-core-1.0.3/stylesheets/compass/reset";
+@import "compass/reset";
 
 body {
   background-color: #ffffcc;
   color: #363636;
-  font-family: Arial;
+  font-family: Helvetica Neue, Helvetica, Arial;
 }

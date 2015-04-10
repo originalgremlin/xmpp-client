@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+NAME="AeroIM"
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 BUILD_DIR="${DIR}/build"
 DIST_DIR="${BUILD_DIR}/dist"
@@ -51,34 +53,45 @@ case "$1" in
     ;;
 
     package)
+        # build atom-shell
+        git clone git@github.com:atom/atom-shell.git "${DIST_DIR}/atom-shell" >"${LOG_DIR}/package.out" 2>"${LOG_DIR}/package.err"
+        pushd "${DIST_DIR}/atom-shell" > /dev/null
+            export GYP_DEFINES="project_name=\"${NAME}\" product_name=\"${NAME}\""
+            export PYTHONPATH=/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/
+            git checkout tags/v0.22.3 >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            script/bootstrap.py -v >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            script/build.py -c Release -t "${NAME}" >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+        popd > /dev/null
+
         # create asar file
-        mkdir "${DIST_DIR}"
-        mkdir "${DIST_DIR}/build"
-        cp "${DIR}/index.html" "${DIR}/main.js" "${DIR}/package.json" "${DIST_DIR}"
-        cp -R  "${BUILD_DIR}/scripts" "${BUILD_DIR}/styles" "${DIST_DIR}/build"
-        "${BIN_DIR}/asar" pack "${DIST_DIR}" "${BUILD_DIR}/app.asar"
-        rm -rf "${DIST_DIR}"
+        mkdir -p "${DIST_DIR}/app/build"
+        cp "${DIR}/index.html" "${DIR}/main.js" "${DIR}/package.json" "${DIST_DIR}/app"
+        cp -R  "${BUILD_DIR}/scripts" "${BUILD_DIR}/styles" "${DIST_DIR}/app/build"
+        "${BIN_DIR}/asar" pack "${DIST_DIR}/app" "${DIST_DIR}/app.asar"
+
+        # clean up
+        # rm -rf "${DIST_DIR}"
     ;;
 
     start)
         # start jsx compilation
         if ! is_running jsx; then
             echo "Starting jsx compilation..."
-            "${BIN_DIR}/jsx" --extension jsx --watch "${SRC_DIR}" "${BUILD_DIR}" >>"${LOG_DIR}/jsx.out" 2>>"${LOG_DIR}/jsx.err" &
+            "${BIN_DIR}/jsx" --extension jsx --watch "${SRC_DIR}" "${BUILD_DIR}" >"${LOG_DIR}/jsx.out" 2>"${LOG_DIR}/jsx.err" &
             echo $! > "${PID_DIR}/jsx.pid"
         fi
 
         # start sass/compass compilation
         if ! is_running compass; then
             echo "Starting compass compilation..."
-            compass watch --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" --config "${ETC_DIR}/compass.rb" >>"${LOG_DIR}/compass.out" 2>>"${LOG_DIR}/compass.err" &
+            compass watch --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" --config "${ETC_DIR}/compass.rb" >"${LOG_DIR}/compass.out" 2>"${LOG_DIR}/compass.err" &
             echo $! > "${PID_DIR}/compass.pid"
         fi
 
         # start atom shell
         if ! is_running atom; then
             echo "Starting atom shell..."
-            "${BIN_DIR}/atom-shell" "${DIR}" --environment=development >>"${LOG_DIR}/atom.out" 2>>"${LOG_DIR}/atom.err" &
+            "${BIN_DIR}/atom-shell" "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
         fi
     ;;
