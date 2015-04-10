@@ -9,13 +9,6 @@
     "type": "git",
     "url": "https://github.com/originalgremlin/xmpp-client"
   },
-  "scripts": {
-    "install": "bin/xmpp-client install",
-    "package": "bin/xmpp-client package",
-    "start": "bin/xmpp-client start",
-    "stop": "bin/xmpp-client stop",
-    "restart": "bin/xmpp-client restart"
-  },
   "config": {
     "development": {
       "debug": true,
@@ -35,7 +28,8 @@
   },
   "devDependencies": {
     "asar": "^0.4.4",
-    "atom-shell": "^0.22.3"
+    "atom-shell": "^0.22.3",
+    "node-inspector": "^0.9.2"
   },
   "private": true
 }

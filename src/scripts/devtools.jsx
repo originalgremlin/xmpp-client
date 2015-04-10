@@ -1,0 +1,1 @@
+require('remote').require('browser-window').addDevToolsExtension('./node_modules/react-devtools');

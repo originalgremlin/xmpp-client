@@ -5,13 +5,19 @@ XMPP client built on Atom Shell and React.
 ## Prerequisites
 
 * npm `brew install npm`
+* apm `npm install -g atom-package-manager`
+
+    In theory this works.  In practice there is a problem with Mac's dynamic loader (dyld).  It seems
+    like the best way to make it work is to [download](https://atom.io/download/mac) and run the Atom text editor (which comes bundled 
+    with shell tools like apm).
+    
 * grunt `sudo npm install -g grunt-cli`
 * ruby `brew install ruby`
 
 
 ## One-time installation
 
-`npm install`
+`bin/xmpp-client install`
 
 
 ## Run the app
@@ -19,18 +25,18 @@ XMPP client built on Atom Shell and React.
 This will start Atom Shell with the xmpp-client app loaded.  It will also set up continuous compilation on
 jsx and sass files.
 
-`npm start`
+`bin/xmpp-client start`
 
 
 ## Stop the app
 
-`npm stop`
+`bin/xmpp-client stop`
 
 Kill the app and associated precompilers.
 
 
 ## Build native apps for deployment
 
-*STILL NEEDS TO BE DONE*
+*STILL NEEDS DEBUGGING*
 
-`npm publish`
+`bin/xmpp-client package`

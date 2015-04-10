@@ -2,6 +2,8 @@
 set -e
 
 NAME="AeroIM"
+DEBUG_PORT=5858
+INSPECTOR_PORT=8080
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 BUILD_DIR="${DIR}/build"
@@ -48,29 +50,39 @@ stop() {
 
 case "$1" in
     install)
-        gem update --system
-        gem install sass compass
+        apm install >"${LOG_DIR}/install.out" 2>"${LOG_DIR}/install.err"
+        gem update --system >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+        gem install sass compass >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+        git clone --recursive https://github.com/facebook/react-devtools.git "${NPM_DIR}/react-devtools" >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+    ;;
+
+    clean)
+        rm -rf "${BUILD_DIR}" "${NPM_DIR}"
     ;;
 
     package)
+        # XXX: work in progress
+        # XXX: doesn't build well or consistently (does on some systems, not on others)
+        # XXX: sometimes python problems, sometimes npm dyld issues
+
         # build atom-shell
         git clone git@github.com:atom/atom-shell.git "${DIST_DIR}/atom-shell" >"${LOG_DIR}/package.out" 2>"${LOG_DIR}/package.err"
         pushd "${DIST_DIR}/atom-shell" > /dev/null
             export GYP_DEFINES="project_name=\"${NAME}\" product_name=\"${NAME}\""
             export PYTHONPATH=/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/
             git checkout tags/v0.22.3 >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
-            script/bootstrap.py -v >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
-            script/build.py -c Release -t "${NAME}" >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            /usr/bin/python script/bootstrap.py -v >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            /usr/bin/python script/build.py -c Release -t "${NAME}" >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
         popd > /dev/null
 
         # create asar file
         mkdir -p "${DIST_DIR}/app/build"
         cp "${DIR}/index.html" "${DIR}/main.js" "${DIR}/package.json" "${DIST_DIR}/app"
         cp -R  "${BUILD_DIR}/scripts" "${BUILD_DIR}/styles" "${DIST_DIR}/app/build"
-        "${BIN_DIR}/asar" pack "${DIST_DIR}/app" "${DIST_DIR}/app.asar"
+        "${BIN_DIR}/asar" pack "${DIST_DIR}/app" "${DIST_DIR}/atom-shell/out/Release/${NAME}.app/Contents/Resources/app.asar"
 
-        # clean up
-        # rm -rf "${DIST_DIR}"
+        # we're done!
+        echo "Congratulations! Your new ${NAME} executable is available at: ${DIST_DIR}/atom-shell/out/Release/${NAME}.app"
     ;;
 
     start)
@@ -91,8 +103,14 @@ case "$1" in
         # start atom shell
         if ! is_running atom; then
             echo "Starting atom shell..."
-            "${BIN_DIR}/atom-shell" "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
+            "${BIN_DIR}/atom-shell" --debug=${DEBUG_PORT} "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
+        fi
+
+        if ! is_running node-debug; then
+            echo "Starting node-debug..."
+            "${BIN_DIR}/node-debug" -p ${INSPECTOR_PORT} "${BUILD_DIR}/scripts/app.js" >"${LOG_DIR}/node-debug.out" 2>"${LOG_DIR}/node-debug.err" &
+            echo $! > "${PID_DIR}/node-debug.pid"
         fi
     ;;
 
@@ -111,6 +129,13 @@ case "$1" in
             echo "compass not running"
         fi
 
+        # stop node debug
+        if is_running node-debug; then
+            stop node-debug
+        else
+            echo "node-debug not running"
+        fi
+
         # stop atom shell
         if is_running atom; then
             stop atom
@@ -125,14 +150,14 @@ case "$1" in
     ;;
 
     status)
-        # stop jsx compilation
+        # jsx compilation
         if is_running jsx; then
             echo "jsx running"
         else
             echo "jsx not running"
         fi
 
-        # stop sass/compass compilation
+        # sass/compass compilation
         if is_running compass; then
             echo "compass running"
 
@@ -140,7 +165,14 @@ case "$1" in
             echo "compass not running"
         fi
 
-        # stop atom shell
+        # node debug
+        if is_running node-debug; then
+            echo "node-debug running"
+        else
+            echo "node-debug not running"
+        fi
+
+        # atom shell
         if is_running atom; then
             echo "atom running"
         else
@@ -149,7 +181,7 @@ case "$1" in
     ;;
 
     *)
-        echo "Usage: $0 {install|package|start|stop|restart|status}"
+        echo "Usage: $0 {install|clean|package|start|stop|restart|status}"
         exit 1
     ;;
 esac

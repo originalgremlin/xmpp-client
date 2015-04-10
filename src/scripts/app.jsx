@@ -3,6 +3,15 @@ var React = require('react'),
     config = require('./build/scripts/config.js'),
     _ = require('lodash');
 
+if (config.debug) {
+    // not currently working, though may be in the future
+    // https://github.com/atom/atom-shell/issues/915
+    require('./build/scripts/devtools.js');
+}
+if (config.watch) {
+    require('atom-watcher')();
+}
+
 React.initializeTouchEvents(true);
 
 var CommentList = React.createClass({
@@ -95,5 +104,3 @@ React.render(
     <CommentBox />,
     document.getElementById('content')
 );
-
-require('atom-watcher')();
