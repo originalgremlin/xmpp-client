@@ -1,7 +1,9 @@
 # external libraries
 node_modules
 npm-debug.log
-.sass-cache
+
+# compiled output
+build
 
 # IntelliJ
 .idea

@@ -3,8 +3,10 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 BUILD_DIR="${DIR}/build"
+ETC_DIR="${DIR}/etc"
 LOG_DIR="${DIR}/var/log"
 NPM_DIR="${DIR}/node_modules"
+BIN_DIR="${NPM_DIR}/.bin"
 PID_DIR="${DIR}/var/run"
 SRC_DIR="${DIR}/src"
 
@@ -43,7 +45,6 @@ stop() {
 
 case "$1" in
     install)
-        grunt download-atom-shell
         gem update --system
         gem install sass compass
     ;;
@@ -57,27 +58,21 @@ case "$1" in
         # start jsx compilation
         if ! is_running jsx; then
             echo "Starting jsx compilation..."
-            "${NPM_DIR}/react-tools/bin/jsx" \
-                --extension jsx --watch "${SRC_DIR}" "${BUILD_DIR}" \
-                >>"${LOG_DIR}/jsx.out" 2>>"${LOG_DIR}/jsx.err" &
+            "${BIN_DIR}/jsx" --extension jsx --watch "${SRC_DIR}" "${BUILD_DIR}" >>"${LOG_DIR}/jsx.out" 2>>"${LOG_DIR}/jsx.err" &
             echo $! > "${PID_DIR}/jsx.pid"
         fi
 
         # start sass/compass compilation
         if ! is_running compass; then
             echo "Starting compass compilation..."
-            compass watch \
-                --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" \
-                >>"${LOG_DIR}/compass.out" 2>>"${LOG_DIR}/compass.err" &
+            compass watch --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" --config "${ETC_DIR}/compass.rb" >>"${LOG_DIR}/compass.out" 2>>"${LOG_DIR}/compass.err" &
             echo $! > "${PID_DIR}/compass.pid"
         fi
 
         # start atom shell
         if ! is_running atom; then
             echo "Starting atom shell..."
-            "${DIR}/build/atom_shell/Atom.app/Contents/MacOS/Atom" \
-                "${DIR}" --environment=development \
-                >>"${LOG_DIR}/atom.out" 2>>"${LOG_DIR}/atom.err" &
+            "${BIN_DIR}/atom-shell" "${DIR}" --environment=development >>"${LOG_DIR}/atom.out" 2>>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
         fi
     ;;
