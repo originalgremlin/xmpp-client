@@ -37,6 +37,6 @@ Kill the app and associated precompilers.
 
 ## Build native apps for deployment
 
-*STILL NEEDS DEBUGGING*
+*STILL NEEDS DEBUGGING.*
 
 `bin/xmpp-client package`

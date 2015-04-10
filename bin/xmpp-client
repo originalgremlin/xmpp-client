@@ -2,7 +2,8 @@
 set -e
 
 NAME="AeroIM"
-DEBUG_PORT=5858
+MAIN_DEBUG_PORT=5858
+RENDER_DEBUG_PORT=8081
 INSPECTOR_PORT=8080
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
@@ -103,14 +104,16 @@ case "$1" in
         # start atom shell
         if ! is_running atom; then
             echo "Starting atom shell..."
-            "${BIN_DIR}/atom-shell" --debug=${DEBUG_PORT} "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
+            "${BIN_DIR}/atom-shell" --debug=${MAIN_DEBUG_PORT} --remote-debugging-port=${RENDER_DEBUG_PORT} "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
         fi
 
+        # start debugging
         if ! is_running node-debug; then
             echo "Starting node-debug..."
-            "${BIN_DIR}/node-debug" -p ${INSPECTOR_PORT} "${BUILD_DIR}/scripts/app.js" >"${LOG_DIR}/node-debug.out" 2>"${LOG_DIR}/node-debug.err" &
+            "${BIN_DIR}/node-debug" -p ${INSPECTOR_PORT} "${DIR}/main.js" >"${LOG_DIR}/node-debug.out" 2>"${LOG_DIR}/node-debug.err" &
             echo $! > "${PID_DIR}/node-debug.pid"
+            open "http://127.0.0.1:${RENDER_DEBUG_PORT}"
         fi
     ;;
 
