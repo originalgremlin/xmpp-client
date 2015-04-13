@@ -1,4 +1,6 @@
-var Menu = require('menu');
+var app = require('app'),
+    BrowserWindow = require('browser-window'),
+    Menu = require('menu');
 
 module.exports = {
     create: function() {

@@ -5,8 +5,18 @@
 
 @import "compass/reset";
 
+h1 {
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+h2 {
+  font-size: 12pt;
+}
+
 body {
   background-color: #ffffcc;
   color: #363636;
   font-family: Helvetica Neue, Helvetica, Arial;
+  font-size: 10pt;
 }

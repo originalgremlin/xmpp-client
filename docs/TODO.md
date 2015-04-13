@@ -5,3 +5,4 @@
 * need to use apm package manager?
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
+* kill Atom.app, node-inspector on script "stop"

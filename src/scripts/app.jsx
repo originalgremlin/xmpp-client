@@ -1,5 +1,7 @@
-var React = require('react'),
-    XMPP = require('stanza.io'),
+var remote = require('remote'),
+    fs = remote.require('fs'),
+    React = require('react'),
+    XMPP = require('./build/scripts/xmpp-client.js'),
     config = require('./build/scripts/config.js'),
     _ = require('lodash');
 
@@ -67,11 +69,21 @@ var CommentBox = React.createClass({
     },
 
     componentDidMount: function() {
-        var data = [
-            { author: "Pete Hunt", text: "This is one comment from data." },
-            { author: "Jordan Walke", text: "This is <em>another</em> comment from data." }
-        ];
-        this.setState({ data: data });
+        var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
+            user = process.env.USER,
+            self = this;
+        fs.readdir(home, function (err, files) {
+            var data;
+            if (err) {
+                console.log(err);
+                data = [];
+            } else {
+                data = files.map(function (file) {
+                    return { author: user, text: file };
+                });
+            }
+            self.setState({ data: data });
+        });
     },
 
     handleCommentSubmit: function(comment) {

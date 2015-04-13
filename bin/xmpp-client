@@ -25,33 +25,48 @@ is_running() {
 }
 
 stop() {
-    PID=`get_pid $1`
-    PID_FILE="${PID_DIR}/$1.pid"
+    for cmd in $@; do
+        if is_running $cmd; then
+            PID=`get_pid $cmd`
+            PID_FILE="${PID_DIR}/$cmd.pid"
 
-    echo -n "Stopping $1..."
-    kill ${PID}
-    for i in {1..10}
-        do
-            if ! is_running $1; then
-                break
+            echo -n "Stopping $cmd..."
+            kill ${PID}
+            for i in {1..10}; do
+                if ! is_running $cmd; then
+                    break
+                fi
+                echo -n "."
+                sleep 1
+            done
+
+            if is_running $cmd; then
+                echo "$cmd not stopped. It may still be shutting down or shutdown may have failed."
+            else
+                echo "$cmd stopped."
+                if [ -f "${PID_FILE}" ]; then
+                    rm "${PID_FILE}"
+                fi
             fi
-            echo -n "."
-            sleep 1
-        done
-
-    if is_running $1; then
-        echo "$1 not stopped. It may still be shutting down or shutdown may have failed."
-    else
-        echo "$1 stopped."
-        if [ -f "${PID_FILE}" ]; then
-            rm "${PID_FILE}"
+        else
+            echo "$cmd not running"
         fi
-    fi
+    done
+}
+
+status() {
+    for cmd in $@; do
+        if is_running $cmd; then
+            echo "$cmd running"
+        else
+            echo "$cmd not running"
+        fi
+    done
 }
 
 case "$1" in
     install)
-        apm install >"${LOG_DIR}/install.out" 2>"${LOG_DIR}/install.err"
+        npm install >"${LOG_DIR}/install.out" 2>"${LOG_DIR}/install.err"
         gem update --system >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
         gem install sass compass >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
         git clone --recursive https://github.com/facebook/react-devtools.git "${NPM_DIR}/react-devtools" >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
@@ -107,8 +122,10 @@ case "$1" in
             "${BIN_DIR}/atom-shell" --debug=${MAIN_DEBUG_PORT} --remote-debugging-port=${RENDER_DEBUG_PORT} "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
             echo $! > "${PID_DIR}/atom.pid"
         fi
+    ;;
 
-        # start debugging
+    debug)
+        $0 start
         if ! is_running node-debug; then
             echo "Starting node-debug..."
             "${BIN_DIR}/node-debug" -p ${INSPECTOR_PORT} "${DIR}/main.js" >"${LOG_DIR}/node-debug.out" 2>"${LOG_DIR}/node-debug.err" &
@@ -118,33 +135,7 @@ case "$1" in
     ;;
 
     stop)
-        # stop jsx compilation
-        if is_running jsx; then
-            stop jsx
-        else
-            echo "jsx not running"
-        fi
-
-        # stop sass/compass compilation
-        if is_running compass; then
-            stop compass
-        else
-            echo "compass not running"
-        fi
-
-        # stop node debug
-        if is_running node-debug; then
-            stop node-debug
-        else
-            echo "node-debug not running"
-        fi
-
-        # stop atom shell
-        if is_running atom; then
-            stop atom
-        else
-            echo "atom not running"
-        fi
+        stop jsx compass node-debug atom
     ;;
 
     restart)
@@ -153,34 +144,7 @@ case "$1" in
     ;;
 
     status)
-        # jsx compilation
-        if is_running jsx; then
-            echo "jsx running"
-        else
-            echo "jsx not running"
-        fi
-
-        # sass/compass compilation
-        if is_running compass; then
-            echo "compass running"
-
-        else
-            echo "compass not running"
-        fi
-
-        # node debug
-        if is_running node-debug; then
-            echo "node-debug running"
-        else
-            echo "node-debug not running"
-        fi
-
-        # atom shell
-        if is_running atom; then
-            echo "atom running"
-        else
-            echo "atom not running"
-        fi
+        status jsx compass node-debug atom
     ;;
 
     *)

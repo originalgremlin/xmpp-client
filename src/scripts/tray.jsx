@@ -3,9 +3,9 @@ var Menu = require('menu'),
 
 module.exports = {
     create: function() {
-        appIcon = new Tray('./src/images/aerofs_logo.png');
-        appIcon.setToolTip('This is my application.');
-        appIcon.setContextMenu(Menu.buildFromTemplate([
+        var tray = new Tray('./src/images/aerofs_logo.png');
+        tray.setToolTip('This is my application.');
+        tray.setContextMenu(Menu.buildFromTemplate([
             { label: 'Item1', type: 'radio' },
             { label: 'Item2', type: 'radio' },
             { label: 'Item3', type: 'radio', checked: true },
