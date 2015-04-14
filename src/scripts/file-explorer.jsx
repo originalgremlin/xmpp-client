@@ -5,28 +5,32 @@ var remote = require('remote'),
     config = require('./build/scripts/config.js'),
     _ = require('lodash');
 
-var FileExplorer = React.createClass({
-    render: function() {
-        return <Folder path={ this.props.root } />;
-    }
-});
-
 var Folder = React.createClass({
     getInitialState: function() {
         return { children: [] };
     },
 
-    componentDidMount: function () {
+    componentDidMount: function() {
+        if (this.props.preload) {
+            this.update(this.props.path);
+        }
+    },
+
+    handleFolderItemClick: function(folderItem) {
+        this.update(folderItem.props.path);
+    },
+
+    update: function(folderPath) {
         var self = this;
-        fs.readdir(self.props.path, function (err, files) {
+        fs.readdir(folderPath, function (err, files) {
             var data;
             if (err) {
                 console.log(err);
                 children = [];
             } else {
                 children = files.map(function (fileName) {
-                    var filePath = path.join(self.props.path, fileName);
-                    var stats = fs.statSync(filePath);
+                    var filePath = path.join(folderPath, fileName),
+                        stats = fs.statSync(filePath);
                     return {
                         path: filePath,
                         name: fileName,
@@ -41,14 +45,11 @@ var Folder = React.createClass({
         });
     },
 
-    handleClick: function(evt) {
-        console.log('clicky', evt);
-    },
-
     render: function() {
+        var self = this;
         var children = this.state.children.map(function (child) {
             return child.kind === 'folder' ?
-                <FolderItem {...child} onClick={ this.handleClick } /> :
+                <FolderItem {...child} handleFolderItemClick={ self.handleFolderItemClick } /> :
                 <FileItem {...child} />;
         });
         return (
@@ -73,16 +74,20 @@ var FileItem = React.createClass({
 });
 
 var FolderItem = React.createClass({
+    handleClick: function(evt) {
+        this.refs.folder.props.handleFolderItemClick(this);
+    },
+
     render: function() {
         return (
-            <li className="folder-item">
+            <li className="folder-item" onClick={ this.handleClick }>
                 <div>
                     <span className="name">{ this.props.name }</span>
                     <span className="size">{ this.props.size }</span>
                     <span className="dateModified">{ this.props.dateModified }</span>
                     <span className="kind">{ this.props.kind }</span>
                 </div>
-                <Folder path={ this.props.path } />
+                <Folder path={ this.props.path } ref='folder' />
             </li>
         );
     }
@@ -90,6 +95,6 @@ var FolderItem = React.createClass({
 
 var root = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
 React.render(
-    <FileExplorer root={ root } />,
+    <Folder path={ root } preload={ true } />,
     document.getElementById('file-explorer')
 );
