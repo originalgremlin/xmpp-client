@@ -68,24 +68,6 @@ var CommentBox = React.createClass({
         return { data: [] };
     },
 
-    componentDidMount: function() {
-        var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-            user = process.env.USER,
-            self = this;
-        fs.readdir(home, function (err, files) {
-            var data;
-            if (err) {
-                console.log(err);
-                data = [];
-            } else {
-                data = files.map(function (file) {
-                    return { author: user, text: file };
-                });
-            }
-            self.setState({ data: data });
-        });
-    },
-
     handleCommentSubmit: function(comment) {
         this.setState({ data: this.state.data.concat(comment) });
     },
