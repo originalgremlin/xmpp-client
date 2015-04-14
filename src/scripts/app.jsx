@@ -1,6 +1,9 @@
 var remote = require('remote'),
     fs = remote.require('fs'),
+    path = remote.require('path'),
     React = require('react'),
+    FileExplorer = require('./build/scripts/file-explorer.js'),
+    FileViewer = require('./build/scripts/file-viewer.js'),
     XMPP = require('./build/scripts/xmpp-client.js'),
     config = require('./build/scripts/config.js'),
     _ = require('lodash');
@@ -16,85 +19,33 @@ if (config.watch) {
 
 React.initializeTouchEvents(true);
 
-var CommentList = React.createClass({
-    getComments: function(comments) {
-        return comments.map(function(comment, index) {
-            return (
-                <Comment author={comment.author} key={index}>
-                    <p dangerouslySetInnerHTML={{__html: comment.text.toString()}} />
-                </Comment>
-            );
-        });
-    },
-
-    render: function() {
-        return (
-            <div className="commentList">
-                {this.getComments(this.props.data)}
-            </div>
-        );
-    }
-});
-
-var CommentForm = React.createClass({
-    handleSubmit: function(evt) {
-        evt.preventDefault();
-        var authorNode = React.findDOMNode(this.refs.author),
-            textNode = React.findDOMNode(this.refs.text),
-            author = authorNode.value.trim(),
-            text = textNode.value.trim();
-        if (text && author) {
-            this.props.onCommentSubmit({author: author, text: text});
-            authorNode.value = '';
-            textNode.value = '';
-        }
-    },
-
-    render: function() {
-        return (
-            <div className="commentForm">
-                <form className="commentForm" onSubmit={this.handleSubmit}>
-                    <input type="text" placeholder="Your name" ref="author" />
-                    <input type="text" placeholder="Say something..." ref="text" />
-                    <input type="submit" value="Post" />
-                </form>
-            </div>
-        );
-    }
-});
-
-var CommentBox = React.createClass({
+var App = React.createClass({
     getInitialState: function() {
-        return { data: [] };
+        return { file: null };
     },
 
-    handleCommentSubmit: function(comment) {
-        this.setState({ data: this.state.data.concat(comment) });
+    handleFileItemClick: function(fileItem) {
+        this.setState({ file: 'file://' + fileItem.props.path });
     },
 
     render: function() {
         return (
-            <div className="commentBox">
-                <h1>Comments</h1>
-                <CommentList data={this.state.data} />
-                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+            <div id="app">
+                <div id="file-explorer">
+                    <FileExplorer id="file-explorer" path={ this.props.root } handleFileItemClick={ this.handleFileItemClick } />
+                </div>
+                <div id="file-viewer">
+                    <FileViewer id="file-viewer" path={ this.state.file } />
+                </div>
+                <div id="chat" class="chat"></div>
             </div>
         );
     }
 });
 
-var Comment = React.createClass({
-    render: function() {
-        return (
-            <div className="comment">
-                <h2 className="commentAuthor">{this.props.author}</h2>
-                {this.props.children}
-            </div>
-        );
-    }
-});
-
+var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
+    aeroRoot = path.join(home, 'AeroFS');
 React.render(
-    <CommentBox />,
-    document.getElementById('content')
+    <App root={ aeroRoot } />,
+    document.body
 );

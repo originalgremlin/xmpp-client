@@ -2,26 +2,42 @@ var remote = require('remote'),
     fs = remote.require('fs'),
     path = remote.require('path'),
     React = require('react'),
-    config = require('./build/scripts/config.js'),
     _ = require('lodash');
 
 var Folder = React.createClass({
     getInitialState: function() {
-        return { children: [] };
+        return { children: [], isVisible: false };
+    },
+
+    getRoot: function () {
+        var root = this;
+        while (!_.isUndefined(root.props.parent)) {
+            root = root.props.parent;
+        }
+        return root;
     },
 
     componentDidMount: function() {
-        if (this.props.preload) {
-            this.update(this.props.path);
+        if (_.isUndefined(this.props.parent)) {
+            this.toggle();
         }
     },
 
-    handleFolderItemClick: function(folderItem) {
-        this.update(folderItem.props.path);
+    toggle: function() {
+        if (this.state.isVisible) {
+            this.clear();
+        } else {
+            this.update();
+        }
     },
 
-    update: function(folderPath) {
-        var self = this;
+    clear: function() {
+        this.setState({ children: [], isVisible: false });
+    },
+
+    update: function() {
+        var self = this,
+            folderPath = this.props.path;
         fs.readdir(folderPath, function (err, files) {
             var data;
             if (err) {
@@ -41,7 +57,7 @@ var Folder = React.createClass({
                     };
                 });
             }
-            self.setState({ children: children });
+            self.setState({ children: children, isVisible: true });
         });
     },
 
@@ -49,19 +65,24 @@ var Folder = React.createClass({
         var self = this;
         var children = this.state.children.map(function (child) {
             return child.kind === 'folder' ?
-                <FolderItem {...child} handleFolderItemClick={ self.handleFolderItemClick } /> :
-                <FileItem {...child} />;
+                <FolderItem {...child} parent={ self } /> :
+                <FileItem {...child} parent={ self } />;
         });
         return (
-            <ul>{ children }</ul>
+            <ul className="folder">{ children }</ul>
         );
     }
 });
 
 var FileItem = React.createClass({
+    handleClick: function(evt) {
+        evt.stopPropagation();
+        this.props.parent.getRoot().props.handleFileItemClick(this);
+    },
+
     render: function() {
         return (
-            <li className="file-item">
+            <li className="file-item" onClick={ this.handleClick }>
                 <div>
                     <span className="name">{ this.props.name }</span>
                     <span className="size">{ this.props.size }</span>
@@ -75,7 +96,8 @@ var FileItem = React.createClass({
 
 var FolderItem = React.createClass({
     handleClick: function(evt) {
-        this.refs.folder.props.handleFolderItemClick(this);
+        evt.stopPropagation();
+        this.refs.folder.toggle();
     },
 
     render: function() {
@@ -87,14 +109,10 @@ var FolderItem = React.createClass({
                     <span className="dateModified">{ this.props.dateModified }</span>
                     <span className="kind">{ this.props.kind }</span>
                 </div>
-                <Folder path={ this.props.path } ref='folder' />
+                <Folder path={ this.props.path } parent={ this.props.parent } ref='folder' />
             </li>
         );
     }
 });
 
-var root = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-React.render(
-    <Folder path={ root } preload={ true } />,
-    document.getElementById('file-explorer')
-);
+module.exports = Folder;
