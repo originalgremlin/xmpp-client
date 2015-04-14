@@ -1,0 +1,23 @@
+ul.folder {
+    li {
+        border: 1px solid #000000;
+        padding: 5px;
+
+        :hover {
+            cursor: pointer;
+        }
+
+        &.file-item {
+            background-color: #8ed0cc;
+        }
+
+        &.folder-item {
+            background-color: #ccc5be;
+        }
+
+        span {
+            display: inline-block;
+            width: 25%;
+        }
+    }
+}

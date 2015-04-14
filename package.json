@@ -4,17 +4,32 @@
   "description": "XMPP client built on Atom Shell and React.",
   "homepage": "https://github.com/originalgremlin/xmpp-client",
   "author": "Barry Shapira <barry@aerofs.com>",
+  "main": "main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/originalgremlin/xmpp-client"
   },
-  "private": true,
-  "main": "main.js",
+  "config": {
+    "development": {
+      "debug": true,
+      "watch": true
+    },
+    "production": {
+      "debug": false,
+      "watch": false
+    }
+  },
   "dependencies": {
     "atom-watcher": "^0.1.2",
     "lodash": "^3.6.0",
     "react": "^0.13.1",
     "react-tools": "^0.13.1",
     "stanza.io": "^7.1.6"
-  }
+  },
+  "devDependencies": {
+    "asar": "^0.4.4",
+    "atom-shell": "^0.22.3",
+    "node-inspector": "^0.9.2"
+  },
+  "private": true
 }

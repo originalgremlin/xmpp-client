@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+set -e
+
+NAME="AeroIM"
+MAIN_DEBUG_PORT=5858
+RENDER_DEBUG_PORT=8081
+INSPECTOR_PORT=8080
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
+BUILD_DIR="${DIR}/build"
+DIST_DIR="${BUILD_DIR}/dist"
+ETC_DIR="${DIR}/etc"
+LOG_DIR="${DIR}/var/log"
+NPM_DIR="${DIR}/node_modules"
+BIN_DIR="${NPM_DIR}/.bin"
+PID_DIR="${DIR}/var/run"
+SRC_DIR="${DIR}/src"
+
+get_pid() {
+    cat "${PID_DIR}/$1.pid"
+}
+
+is_running() {
+    [ -f "${PID_DIR}/$1.pid" ] && ps `get_pid $1` > /dev/null 2>&1
+}
+
+stop() {
+    for cmd in $@; do
+        if is_running $cmd; then
+            PID=`get_pid $cmd`
+            PID_FILE="${PID_DIR}/$cmd.pid"
+
+            echo -n "Stopping $cmd..."
+            kill ${PID}
+            for i in {1..10}; do
+                if ! is_running $cmd; then
+                    break
+                fi
+                echo -n "."
+                sleep 1
+            done
+
+            if is_running $cmd; then
+                echo "$cmd not stopped. It may still be shutting down or shutdown may have failed."
+            else
+                echo "$cmd stopped."
+                if [ -f "${PID_FILE}" ]; then
+                    rm "${PID_FILE}"
+                fi
+            fi
+        else
+            echo "$cmd not running"
+        fi
+    done
+}
+
+status() {
+    for cmd in $@; do
+        if is_running $cmd; then
+            echo "$cmd running"
+        else
+            echo "$cmd not running"
+        fi
+    done
+}
+
+case "$1" in
+    install)
+        npm install >"${LOG_DIR}/install.out" 2>"${LOG_DIR}/install.err"
+        gem update --system >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+        gem install sass compass >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+        git clone --recursive https://github.com/facebook/react-devtools.git "${NPM_DIR}/react-devtools" >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+    ;;
+
+    clean)
+        rm -rf "${BUILD_DIR}" "${NPM_DIR}"
+    ;;
+
+    package)
+        # XXX: work in progress
+        # XXX: doesn't build well or consistently (does on some systems, not on others)
+        # XXX: sometimes python problems, sometimes npm dyld issues
+
+        # build atom-shell
+        git clone git@github.com:atom/atom-shell.git "${DIST_DIR}/atom-shell" >"${LOG_DIR}/package.out" 2>"${LOG_DIR}/package.err"
+        pushd "${DIST_DIR}/atom-shell" > /dev/null
+            export GYP_DEFINES="project_name=\"${NAME}\" product_name=\"${NAME}\""
+            export PYTHONPATH=/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/
+            git checkout tags/v0.22.3 >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            /usr/bin/python script/bootstrap.py -v >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            /usr/bin/python script/build.py -c Release -t "${NAME}" >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+        popd > /dev/null
+
+        # create asar file
+        mkdir -p "${DIST_DIR}/app/build"
+        cp "${DIR}/index.html" "${DIR}/main.js" "${DIR}/package.json" "${DIST_DIR}/app"
+        cp -R  "${BUILD_DIR}/scripts" "${BUILD_DIR}/styles" "${DIST_DIR}/app/build"
+        "${BIN_DIR}/asar" pack "${DIST_DIR}/app" "${DIST_DIR}/atom-shell/out/Release/${NAME}.app/Contents/Resources/app.asar"
+
+        # we're done!
+        echo "Congratulations! Your new ${NAME} executable is available at: ${DIST_DIR}/atom-shell/out/Release/${NAME}.app"
+    ;;
+
+    start)
+        # start jsx compilation
+        if ! is_running jsx; then
+            echo "Starting jsx compilation..."
+            "${BIN_DIR}/jsx" --extension jsx --watch "${SRC_DIR}" "${BUILD_DIR}" >"${LOG_DIR}/jsx.out" 2>"${LOG_DIR}/jsx.err" &
+            echo $! > "${PID_DIR}/jsx.pid"
+        fi
+
+        # start sass/compass compilation
+        if ! is_running compass; then
+            echo "Starting compass compilation..."
+            compass watch --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" --config "${ETC_DIR}/compass.rb" >"${LOG_DIR}/compass.out" 2>"${LOG_DIR}/compass.err" &
+            echo $! > "${PID_DIR}/compass.pid"
+        fi
+
+        # start atom shell
+        if ! is_running atom; then
+            echo "Starting atom shell..."
+            "${BIN_DIR}/atom-shell" --debug=${MAIN_DEBUG_PORT} --remote-debugging-port=${RENDER_DEBUG_PORT} "${DIR}" --environment=development >"${LOG_DIR}/atom.out" 2>"${LOG_DIR}/atom.err" &
+            echo $! > "${PID_DIR}/atom.pid"
+        fi
+    ;;
+
+    debug)
+        $0 start
+        if ! is_running node-debug; then
+            echo "Starting node-debug..."
+            "${BIN_DIR}/node-debug" -p ${INSPECTOR_PORT} "${DIR}/main.js" >"${LOG_DIR}/node-debug.out" 2>"${LOG_DIR}/node-debug.err" &
+            echo $! > "${PID_DIR}/node-debug.pid"
+            open "http://127.0.0.1:${RENDER_DEBUG_PORT}"
+        fi
+    ;;
+
+    stop)
+        stop jsx compass node-debug atom
+    ;;
+
+    restart)
+        $0 stop
+        $0 start
+    ;;
+
+    status)
+        status jsx compass node-debug atom
+    ;;
+
+    *)
+        echo "Usage: $0 {install|clean|package|start|stop|restart|status}"
+        exit 1
+    ;;
+esac
