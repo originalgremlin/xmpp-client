@@ -1,8 +1,8 @@
 (function(undefined) {
     var app = require('app'),
         BrowserWindow = require('browser-window'),
-        Tray = require('./build/scripts/components/tray'),
-        ApplicationMenu = require('./build/scripts/components/application-menu'),
+        Tray = require('./build/scripts/main/tray'),
+        ApplicationMenu = require('./build/scripts/main/application-menu'),
         _ = require('lodash');
 
     var windows = {};

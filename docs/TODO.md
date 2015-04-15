@@ -6,3 +6,8 @@
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
+* i18n
+    translations
+    can work in main process? how do we detect user language?
+    synchronous download of translations files from i18n.js
+* more serious routing

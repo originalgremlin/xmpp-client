@@ -22,7 +22,9 @@
   "dependencies": {
     "atom-watcher": "^0.1.2",
     "lodash": "^3.6.0",
+    "node-polyglot": "^0.4.1",
     "react": "^0.13.1",
+    "react-router": "^0.13.2",
     "react-tools": "^0.13.1",
     "stanza.io": "^7.1.6"
   },

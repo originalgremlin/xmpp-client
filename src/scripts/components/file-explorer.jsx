@@ -65,12 +65,11 @@
             // XXX: Warning: Any use of a keyed object should be wrapped in React.addons.createFragment(object) before being passed as a child.
             // XXX: What does this mean? How do I stop it?
             // XXX: There is no noticable degradation because of the warning.
-            var self = this;
             var children = this.state.children.map(function (child) {
                 return child.kind === 'folder' ?
-                    <FolderItem key={child.path} {...child} parent={ self } /> :
-                    <FileItem key={child.path} {...child} parent={ self } />;
-            });
+                    <FolderItem key={child.path} {...child} parent={ this } /> :
+                    <FileItem key={child.path} {...child} parent={ this } />;
+            }, this);
             return (
                 <ul className="folder">{ children }</ul>
             );
