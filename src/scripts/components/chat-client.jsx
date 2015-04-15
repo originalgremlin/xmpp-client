@@ -1,4 +1,6 @@
 (function(undefined) {
+    'use strict';
+
     var React = require('react'),
         XMPP = require('stanza.io');
 
@@ -12,19 +14,19 @@
             return (
                 <form className="connection-form" onSubmit={ this.handleSubmit }>
                     <fieldset>
-                        <label htmlFor="jid">{ i18n.t("username") }</label>
-                        <input name="jid" type="text" placeholder={ i18n.t("username@server") } />
+                        <label htmlFor="jid">{ i18n.t('username') }</label>
+                        <input name="jid" type="text" placeholder={ i18n.t('username@server') } />
                     </fieldset>
                     <fieldset>
-                        <label htmlFor="password">{ i18n.t("password") }</label>
+                        <label htmlFor="password">{ i18n.t('password') }</label>
                         <input name="password" type="password" />
                     </fieldset>
                     <fieldset>
-                        <label htmlFor="server">{ i18n.t("server url") }</label>
-                        <input name="server" type="text" placeholder={ i18n.t("http://example.com:5222/http-bind/") } />
+                        <label htmlFor="server">{ i18n.t('server url') }</label>
+                        <input name="server" type="text" placeholder={ i18n.t('http://example.com:5222/http-bind/') } />
                     </fieldset>
                     <fieldset>
-                        <button type="submit">{ i18n.t("Connect") }</button>
+                        <button type="submit">{ i18n.t('Connect') }</button>
                     </fieldset>
                 </form>
             );
@@ -46,7 +48,7 @@
             return (
                 <form className="composition-form" onSubmit={ this.handleSubmit }>
                     <textarea ref="textarea" />
-                    <button type="submit">{ i18n.t("Submit") }</button>
+                    <button type="submit">{ i18n.t('Submit') }</button>
                 </form>
             );
         }
@@ -85,7 +87,7 @@
         }
     });
 
-    var Client = React.createClass({
+    var ChatClient = React.createClass({
         getInitialState: function() {
             return { username: null, password: null, server: null };
         },
@@ -126,7 +128,7 @@
 
         handleCompositionFormSubmit: function(message) {
             message.from = this.state.username;
-            message.to = "TODO"
+            message.to = 'TODO'
             this.refs.messageList.addMessage(message);
             // TODO: send new message to server
         },
@@ -142,5 +144,5 @@
         }
     });
 
-    module.exports = Client;
+    module.exports = ChatClient;
 })();

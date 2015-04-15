@@ -3,6 +3,8 @@
  * https://github.com/atom/atom-shell/issues/915
  */
 (function(undefined) {
+    'use strict';
+
     var BrowserWindow = require('remote').require('browser-window'),
         config = require('./config.js');
 

@@ -11,3 +11,4 @@
     can work in main process? how do we detect user language?
     synchronous download of translations files from i18n.js
 * more serious routing
+* Settings

@@ -4,7 +4,7 @@
 // components
 @import "components/file-explorer";
 @import "components/file-viewer";
-@import "components/xmpp-client";
+@import "components/chat-client";
 
 // app
 body {
@@ -33,7 +33,7 @@ body {
     width: 40%;
 }
 
-#xmpp-client {
+#chat-client {
     display: inline-block;
     height: 100%;
     width: 20%;

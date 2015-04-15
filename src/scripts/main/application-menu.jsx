@@ -1,4 +1,6 @@
 (function(undefined) {
+    'use strict';
+
     var app = require('app'),
         BrowserWindow = require('browser-window'),
         Menu = require('menu');

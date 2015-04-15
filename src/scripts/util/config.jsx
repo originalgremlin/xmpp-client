@@ -1,8 +1,10 @@
 (function(undefined) {
-    var arguments = require('./arguments.js'),
+    'use strict';
+
+    var atomArgs = require('./arguments.js'),
         _ = require('lodash');
 
-    var environment = arguments['--environment'] || 'production',
+    var environment = atomArgs['--environment'] || 'production',
         prefix = 'npm_package_config_' + environment + '_',
         prefixLength = prefix.length;
 

@@ -1,4 +1,6 @@
 (function(undefined) {
+    'use strict';
+
     var Menu = require('menu'),
         Tray = require('tray');
 

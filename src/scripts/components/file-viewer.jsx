@@ -1,4 +1,6 @@
 (function(undefined) {
+    'use strict';
+
     var React = require('react'),
         _ = require('lodash');
 
