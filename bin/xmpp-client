@@ -10,6 +10,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 BUILD_DIR="${DIR}/build"
 DIST_DIR="${BUILD_DIR}/dist"
 ETC_DIR="${DIR}/etc"
+EXT_DIR="${DIR}/extensions"
 LOG_DIR="${DIR}/var/log"
 NPM_DIR="${DIR}/node_modules"
 BIN_DIR="${NPM_DIR}/.bin"
@@ -66,10 +67,24 @@ status() {
 
 case "$1" in
     install)
+        # base
         npm install >"${LOG_DIR}/install.out" 2>"${LOG_DIR}/install.err"
+
+        # development
         gem update --system >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
         gem install sass compass >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
         git clone --recursive https://github.com/facebook/react-devtools.git "${NPM_DIR}/react-devtools" >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+
+        # extensions
+        mkdir -p "${EXT_DIR}"
+        pushd "${EXT_DIR}" > /dev/null
+            # elasticsearch
+            curl -O "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.1.tar.gz"
+            tar -xzf elasticsearch-1.5.1.tar.gz
+            rm -f elasticsearch-1.5.1.tar.gz
+            mv elasticsearch-1.5.1 elasticsearch
+            elasticsearch/bin/plugin install elasticsearch/elasticsearch-mapper-attachments/2.5.0
+        popd > /dev/null
     ;;
 
     clean)
