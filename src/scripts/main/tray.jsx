@@ -6,7 +6,7 @@
 
     module.exports = {
         create: function () {
-            var tray = new Tray('./src/images/aerofs_logo.png');
+            var tray = new Tray('./src/images/main/tray.png');
             tray.setToolTip('This is my application.');
             tray.setContextMenu(Menu.buildFromTemplate([
                 {label: 'Item1', type: 'radio'},

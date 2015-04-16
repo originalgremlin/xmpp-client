@@ -12,13 +12,9 @@
 
         render: function() {
             return (
-                <div>
-                    <div className="file-tree">
-                        <FileTree refs="fileTree" root={ this.props.root } handleFileItemClick={ this.handleFileItemClick } />
-                    </div>
-                    <div className="file-viewer">
-                        <FileViewer ref="fileViewer" />
-                    </div>
+                <div className="file-explorer">
+                    <FileTree refs="fileTree" root={ this.props.root } handleFileItemClick={ this.handleFileItemClick } />
+                    <FileViewer ref="fileViewer" />
                 </div>
             );
         }

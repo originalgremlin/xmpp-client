@@ -1,5 +1,6 @@
 (function(undefined) {
     var app = require('app'),
+        path = require('path'),
         BrowserWindow = require('browser-window'),
         Tray = require('./build/scripts/main/tray'),
         ApplicationMenu = require('./build/scripts/main/application-menu'),
@@ -17,10 +18,10 @@
             'min-width': 800,
             'min-height': 600,
             title: 'AeroIM',
-            icon: './src/images/aerofs_logo.png',
+            icon: './src/images/main/icon.png',
             type: 'desktop'
         });
-        windows.main.loadUrl('file://' + __dirname + '/index.html');
+        windows.main.loadUrl(path.join('file://', __dirname, 'index.html'));
 
         _.forEach(windows, function (val, key) {
             windows[key].on('closed', function() {

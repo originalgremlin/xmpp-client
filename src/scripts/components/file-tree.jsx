@@ -8,12 +8,20 @@
 
     var FileTree = React.createClass({
         componentWillMount: function() {
-            this.handleFileItemClick = this.props.handleFileItemClick;
+            this.handleFileItemClick = this.props.handleFileItemClick || function(){};
         },
 
         render: function() {
             return (
-                <Folder ref="folder" path={ this.props.root } root={ this } />
+                <div className="file-tree">
+                    <div className="header">
+                        <span className="name">{ i18n.t('Name') }</span>
+                        <span className="size">{ i18n.t('Size') }</span>
+                        <span className="kind">{ i18n.t('Kind') }</span>
+                    </div>
+                    <div className="placeholder">&nbsp;</div>
+                    <Folder ref="folder" path={ this.props.root } root={ this } />
+                </div>
             );
         },
 
@@ -53,9 +61,6 @@
         },
 
         render: function() {
-            // XXX: "Warning: Any use of a keyed object should be wrapped in React.addons.createFragment(object) before being passed as a child."
-            // XXX: What does this mean? How do I stop it? Why doesn't it appear in other list rendering contexts?
-            // XXX: There is no obvious degradation because of the warning.
             var children = this.state.children.map(function (child) {
                 return child.isDirectory ?
                     <FolderItem key={child.path} {...child} parent={ this } root={ this.props.root } /> :

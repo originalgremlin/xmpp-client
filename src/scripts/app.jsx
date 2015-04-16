@@ -13,14 +13,15 @@
     window.i18n = i18n;
 
     var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-        aeroRoot = path.join(home, 'AeroFS');
+        aero = path.join(home, 'AeroFS'),
+        root = fs.existsSync(aero) ? aero : home;
 
     var App = React.createClass({
         render: function() {
             return (
                 <div id="app">
                     <div id="file-explorer">
-                        <FileExplorer refs="fileExplorer" root={ fs.exists(aeroRoot) ? aeroRoot : home } />
+                        <FileExplorer refs="fileExplorer" root={ root } />
                     </div>
                     <div id="chat-client">
                         <ChatClient ref="chatClient" />
