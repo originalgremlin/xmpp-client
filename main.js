@@ -1,6 +1,5 @@
 (function(undefined) {
     var app = require('app'),
-        path = require('path'),
         BrowserWindow = require('browser-window'),
         Tray = require('./build/scripts/main/tray'),
         ApplicationMenu = require('./build/scripts/main/application-menu'),
@@ -21,7 +20,7 @@
             icon: './src/images/main/icon.png',
             type: 'desktop'
         });
-        windows.main.loadUrl(path.join('file://', __dirname, 'index.html'));
+        windows.main.loadUrl('file://' + __dirname + '/index.html');
 
         _.forEach(windows, function (val, key) {
             windows[key].on('closed', function() {

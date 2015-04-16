@@ -84,7 +84,7 @@
                     <div>
                         <span className="name">{ this.props.name }</span>
                         <span className="size">{ this.props.size }</span>
-                        <span className="kind">{ i18n.t(this.props.isDirectory ? 'folder' : 'file') }</span>
+                        <span className="kind">{ i18n.t('file') }</span>
                     </div>
                 </li>
             );
@@ -103,7 +103,7 @@
                     <div>
                         <span className="name">{ this.props.name }</span>
                         <span className="size">{ this.props.size }</span>
-                        <span className="kind">{ this.props.kind }</span>
+                        <span className="kind">{ i18n.t('folder') }</span>
                     </div>
                     <Folder ref='folder' path={ this.props.path } parent={ this.props.parent } root={ this.props.root } />
                 </li>

@@ -1,4 +1,15 @@
 {
-    "hello": "world",
-    "foo": "bar"
+    "Connect": "Connect",
+    "Kind": "Kind",
+    "Name": "Name",
+    "Size": "Size",
+    "Submit": "Submit",
+    "file": "file",
+    "folder": "folder",
+    "http://example.com:5222/http-bind/": "http://example.com:5222/http-bind/",
+    "password": "password",
+    "server url": "server url",
+    "username": "username",
+    "username@server": "username@server",
+    "": ""
 }

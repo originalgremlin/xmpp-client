@@ -7,8 +7,9 @@
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
 * i18n
-    translations
     can work in main process? how do we detect user language?
-    synchronous download of translations files from i18n.js
 * more serious routing
 * Settings
+* 'utf8' for file encoding in extensions
+* make clean: elasticsearch dir
+* config file for elasticsearch => we need our own cluster to not join the user's possibly pre-existing cluster
