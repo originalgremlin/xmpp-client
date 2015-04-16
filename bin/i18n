@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
+TEMPLATE_FILE="${DIR}/src/i18n/_template_"
+SCRIPTS_DIR="${DIR}/src/scripts"
+
+case "$1" in
+    gather)
+        echo "{" > "${TEMPLATE_FILE}"
+        grep -e "i18n.t('.*')" -h -o -r "${SCRIPTS_DIR}" |
+            sed -e "s/i18n.t('\(.*\)')/    \"\1\": \"\",/" |
+            sort -u >> "${TEMPLATE_FILE}"
+        echo '    "": ""' >> "${TEMPLATE_FILE}"
+        echo "}" >> "${TEMPLATE_FILE}"
+    ;;
+
+    add)
+        if [ $# -ne 2 ]; then
+            echo 1>&2 "Usage: $0 add <locale (i.e. 'fr' or 'fr-FR')>"
+            exit 2
+        else
+            OUT_FILE="${DIR}/src/i18n/$2.json"
+            cp -n "${TEMPLATE_FILE}" "${OUT_FILE}"
+            echo "Translation file for '$2' created at ${OUT_FILE}"
+        fi
+    ;;
+
+    *)
+        echo 1>&2 "Usage: $0 {gather|add}"
+        exit 1
+    ;;
+esac

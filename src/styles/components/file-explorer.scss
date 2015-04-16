@@ -1,0 +1,21 @@
+@import "file-tree";
+@import "file-viewer";
+
+.file-explorer {
+    height: 100%;
+    width: 100%;
+
+    .file-tree {
+        display: inline-block;
+        height: 100%;
+        width: 50%;
+        overflow: hidden;
+    }
+
+    .file-viewer {
+        display: inline-block;
+        height: 100%;
+        width: 50%;
+        overflow: hidden;
+    }
+}
