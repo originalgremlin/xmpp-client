@@ -1,0 +1,48 @@
+$padding: 5px;
+$border: 1px;
+
+.file-tree {
+    .header {
+        background-color: #99FBB3;
+        border: 1px solid #000000;
+        font-weight: bold;
+        padding: $padding;
+        position: fixed;
+        width: calc(40% - 12px);
+    }
+
+    .placeholder {
+        padding: $padding;
+        border: 1px solid #000000;
+        visibility: hidden;
+    }
+
+    span {
+        display: inline-block;
+        width: 33%;
+    }
+
+    >ul.folder {
+        height: 100%;
+        overflow: auto;
+    }
+
+    ul.folder {
+        li {
+            border: 1px solid #000000;
+            padding: $padding;
+
+            :hover {
+                cursor: pointer;
+            }
+
+            &.file-item {
+                background-color: #8ed0cc;
+            }
+
+            &.folder-item {
+                background-color: #ccc5be;
+            }
+        }
+    }
+}

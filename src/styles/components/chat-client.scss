@@ -1,2 +1,55 @@
-form.connection-form {
+.chat-client {
+    height: 100%;
+    width: 100%;
+
+    .credentials-form {
+        input {
+            float: right;
+        }
+    }
+
+    .message-list {
+    }
+
+    .message {
+        margin: 5px;
+        padding: 5px;
+
+        &.outgoing {
+            background-color: #99FBB3;
+        }
+
+        &.incoming {
+            background-color: #2b6cc2;
+        }
+
+        span {
+            display: inline-block;
+
+            &.from {
+                width: 20%
+            }
+
+            &.to {
+                width: 20%
+            }
+
+            &.body {
+                width: 50%;
+                white-space: pre;
+            }
+        }
+    }
+
+    .message-form {
+        textarea {
+            display: block;
+            margin: 5px 0px;
+            resize: none;
+            width: 100%;
+        }
+
+        button {
+        }
+    }
 }

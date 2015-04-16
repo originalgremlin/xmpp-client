@@ -3,7 +3,6 @@
 
 // components
 @import "components/file-explorer";
-@import "components/file-viewer";
 @import "components/chat-client";
 
 // app
@@ -12,30 +11,24 @@ body {
     color: #363636;
     font-family: Helvetica Neue, Helvetica, Arial;
     font-size: 10pt;
+    overflow: hidden;
 }
 
 #app {
     height: 100vh;
     width: 100vw;
-    overflow: hidden;
 }
 
 #file-explorer {
     display: inline-block;
+    float: left;
     height: 100%;
-    width: 40%;
-    overflow: auto;
-}
-
-#file-viewer {
-    display: inline-block;
-    height: 100%;
-    width: 40%;
+    width: 80%;
 }
 
 #chat-client {
     display: inline-block;
+    float: left;
     height: 100%;
     width: 20%;
-    overflow: auto;
 }

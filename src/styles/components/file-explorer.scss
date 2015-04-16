@@ -1,23 +1,21 @@
-ul.folder {
-    li {
-        border: 1px solid #000000;
-        padding: 5px;
+@import "file-tree";
+@import "file-viewer";
 
-        :hover {
-            cursor: pointer;
-        }
+.file-explorer {
+    height: 100%;
+    width: 100%;
 
-        &.file-item {
-            background-color: #8ed0cc;
-        }
+    .file-tree {
+        display: inline-block;
+        height: 100%;
+        width: 50%;
+        overflow: hidden;
+    }
 
-        &.folder-item {
-            background-color: #ccc5be;
-        }
-
-        span {
-            display: inline-block;
-            width: 25%;
-        }
+    .file-viewer {
+        display: inline-block;
+        height: 100%;
+        width: 50%;
+        overflow: hidden;
     }
 }
