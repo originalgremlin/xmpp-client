@@ -9,7 +9,4 @@
 * can i18n work in main process? how do we detect user language?
 * more serious routing
 * Settings (localStorage does persist)
-* initial file dump in chokidar sucks.  how do we buffer indexing on startup?
-    or really, how do we index the files one time on first launch then ignore them?
 * write file search component
-* create ES file index and mapping in install script

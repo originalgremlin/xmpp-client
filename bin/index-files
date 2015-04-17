@@ -1,0 +1,125 @@
+#!/usr/bin/env node
+var chokidar = require('chokidar'),
+    Deque = require("collections/deque"),
+    elasticsearch = require('elasticsearch'),
+    fs = require('fs'),
+    path = require('path'),
+    util = require('util'),
+    _ = require('lodash');
+
+
+//--- check command line args
+if (process.argv.length != 3) {
+    console.error(util.format('Usage: %s <root folder path to index>', process.argv[1]));
+    process.exit(1);
+}
+
+
+//--- job queue
+var jobs = new Deque([], 1024),
+    JOB_DELAY = 100,
+    MAX_SIZE = 10000000;
+
+
+//--- start filesystem watch (job producer)
+var rootFolder = process.argv[2],
+    watcher = chokidar.watch(rootFolder, { alwaysStat: true });
+watcher.on('add', function(path, stats) {
+    jobs.push({ type: 'add', path: path, stats: stats });
+});
+watcher.on('change', function(path, stats) {
+    jobs.push({ type: 'change', path: path, stats: stats });
+});
+watcher.on('unlink', function(path) {
+    jobs.push({ type: 'unlink', path: path });
+});
+
+
+//--- start up elasticsearch client (job consumer)
+var client = new elasticsearch.Client(),
+    index = 'aerofs',
+    type = 'file';
+client.ping({
+    maxRetries: 5,
+    requestTimeout: 30000
+}, function (err, response) {
+    if (err) {
+        console.error(err);
+        process.exit(1);
+    } else {
+        setInterval(function () {
+            if (jobs.length > 0) {
+                actions.start(jobs.shift());
+            }
+        }, JOB_DELAY);
+    }
+});
+
+
+//--- where the real work gets done
+var actions = {
+    start: function (job) {
+        try {
+            actions[job.type](job);
+        } catch (ex) {
+            console.error(ex.message, ex.stack, job);
+        }
+    },
+
+    finish: function (job, err, response) {
+        var message = util.format('%s: %j', job.type, err ? err : response);
+        console[err ? 'error' : 'log'](message);
+    },
+
+    add: function(job) {
+        actions.upsert(job);
+    },
+
+    change: function(job) {
+        actions.upsert(job);
+    },
+
+    upsert: function (job) {
+        fs.readFile(job.path, function(err, data) {
+            if (err) {
+                actions.finish(job, err, null);
+            } else if (data.length > MAX_SIZE) {
+                actions.finish(job, null, { path: job.path, size: data.length, message: 'File too large to index.'});
+            } else {
+                client.update({
+                    index: index,
+                    type: type,
+                    id: job.path,
+                    body: {
+                        // insert
+                        upsert: {
+                            path: job.path,
+                            size: job.stats.size,
+                            createdAt: job.stats.birthtime,
+                            modifiedAt: job.stats.mtime,
+                            attachment: new Buffer(data, 'binary').toString('base64')
+                        },
+                        // update
+                        doc: {
+                            size: job.stats.size,
+                            modifiedAt: job.stats.mtime,
+                            attachment: new Buffer(data, 'binary').toString('base64')
+                        }
+                    }
+                }, function(err, response, status) {
+                    actions.finish(job, err, response);
+                });
+            }
+        });
+    },
+
+    unlink: function (job) {
+        client.delete({
+            index: index,
+            type: type,
+            id: job.path
+        }, function(err, response, status) {
+            actions.finish(job, err, response);
+        });
+    }
+};
