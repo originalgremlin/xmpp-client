@@ -10,10 +10,9 @@
     can work in main process? how do we detect user language?
 * more serious routing
 * Settings
-* get elasticsearch to index files
+  does localStorage persist across invocations?
+* initial file dump in chokidar sucks.  how do we buffer indexing on startup?
+    or really, how do we index the files one time on first launch then ignore them?
 * write file search component
 * redirect all install script output to a file, rather than redirect commands one by one
     http://stackoverflow.com/questions/3173131/redirect-copy-of-stdout-to-log-file-from-within-bash-script-itself
-* 'utf8' for file encoding in extensions
-* make clean: elasticsearch dir
-* config file for elasticsearch => we need our own cluster to not join the user's possibly pre-existing cluster
