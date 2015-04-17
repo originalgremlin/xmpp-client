@@ -6,10 +6,16 @@
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
-* i18n
-    can work in main process? how do we detect user language?
+* can i18n work in main process? how do we detect user language?
 * more serious routing
-* Settings
-* 'utf8' for file encoding in extensions
-* make clean: elasticsearch dir
-* config file for elasticsearch => we need our own cluster to not join the user's possibly pre-existing cluster
+* Settings (localStorage does persist)
+* write file search component
+   good query: 
+   {
+     "query": {
+       "multi_match" : {
+         "query": "dog", 
+         "fields": ["file", "path"]
+       }
+     }
+   }
