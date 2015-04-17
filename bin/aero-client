@@ -67,17 +67,20 @@ status() {
 
 case "$1" in
     install)
+        exec 1>"${LOG_DIR}/install.out"
+        exec 2>"${LOG_DIR}/install.err"
+
         # base
-        npm install >"${LOG_DIR}/install.out" 2>"${LOG_DIR}/install.err"
+        npm install
 
         # development
-        gem update --system >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
-        gem install sass compass >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
-        git clone --recursive https://github.com/facebook/react-devtools.git "${NPM_DIR}/react-devtools" >>"${LOG_DIR}/install.out" 2>>"${LOG_DIR}/install.err"
+        gem update --system || true
+        gem install sass compass || true
+        git clone --recursive https://github.com/facebook/react-devtools.git "${NPM_DIR}/react-devtools"
 
         # extensions
         mkdir -p "${EXT_DIR}"
-        pushd "${EXT_DIR}" > /dev/null
+        pushd "${EXT_DIR}" >/dev/null
             # elasticsearch
             curl -O "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.1.tar.gz"
             tar -xzf elasticsearch-1.5.1.tar.gz
@@ -86,26 +89,36 @@ case "$1" in
             elasticsearch/bin/plugin install elasticsearch/elasticsearch-mapper-attachments/2.5.0
             elasticsearch/bin/plugin install polyfractal/elasticsearch-inquisitor
             elasticsearch/bin/plugin install royrusso/elasticsearch-HQ
-        popd > /dev/null
+
+            # TODO: create file index and mapping
+            # start the server
+            # curl -XPOST some shit from elasticsearch.jsx
+        popd >/dev/null
     ;;
 
     clean)
-        rm -rf "${BUILD_DIR}" "${NPM_DIR}" "${EXT_DIR}/elasticsearch"
+        exec 1>"${LOG_DIR}/clean.out"
+        exec 2>"${LOG_DIR}/clean.err"
+
+        rm -rfv "${BUILD_DIR}" "${NPM_DIR}" "${EXT_DIR}/elasticsearch"
     ;;
 
     package)
+        exec 1>"${LOG_DIR}/package.out"
+        exec 2>"${LOG_DIR}/package.err"
+
         # XXX: work in progress
         # XXX: doesn't build well or consistently (does on some systems, not on others)
         # XXX: sometimes python problems, sometimes npm dyld issues
 
         # build atom-shell
-        git clone git@github.com:atom/atom-shell.git "${DIST_DIR}/atom-shell" >"${LOG_DIR}/package.out" 2>"${LOG_DIR}/package.err"
+        git clone git@github.com:atom/atom-shell.git "${DIST_DIR}/atom-shell"
         pushd "${DIST_DIR}/atom-shell" > /dev/null
             export GYP_DEFINES="project_name=\"${NAME}\" product_name=\"${NAME}\""
             export PYTHONPATH=/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC/
-            git checkout tags/v0.22.3 >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
-            /usr/bin/python script/bootstrap.py -v >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
-            /usr/bin/python script/build.py -c Release -t "${NAME}" >>"${LOG_DIR}/package.out" 2>>"${LOG_DIR}/package.err"
+            git checkout tags/v0.22.3
+            /usr/bin/python script/bootstrap.py -v
+            /usr/bin/python script/build.py -c Release -t "${NAME}"
         popd > /dev/null
 
         # create asar file
@@ -119,6 +132,23 @@ case "$1" in
     ;;
 
     start)
+        # start elasticsearch
+        if ! is_running elasticsearch; then
+            echo -n "Starting elasticsearch..."
+            "${EXT_DIR}/elasticsearch/bin/elasticsearch" -Des.config="${ETC_DIR}/elasticsearch.yml" >"${LOG_DIR}/elasticsearch.out" 2>"${LOG_DIR}/elasticsearch.err" &
+            echo $! > "${PID_DIR}/elasticsearch.pid"
+
+            # wait until the server is processing requests
+            ES_CODE=1
+            while [ $ES_CODE -ne 0 ]; do
+                echo -n "."
+                sleep 1
+                curl -sSf http://localhost:9200 > /dev/null 2>&1
+                ES_CODE=$?
+            done
+            echo
+        fi
+
         # start jsx compilation
         if ! is_running jsx; then
             echo "Starting jsx compilation..."
@@ -152,7 +182,7 @@ case "$1" in
     ;;
 
     stop)
-        stop jsx compass node-debug atom
+        stop jsx compass node-debug atom elasticsearch
     ;;
 
     restart)

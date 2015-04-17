@@ -1,12 +1,12 @@
 (function(undefined) {
     var app = require('app'),
-        elasticsearch = require('./build/scripts/extensions/elasticsearch'),
+        //elasticsearch = require('./build/scripts/extensions/elasticsearch'),
         BrowserWindow = require('browser-window'),
         Tray = require('./build/scripts/main/tray'),
         ApplicationMenu = require('./build/scripts/main/application-menu'),
         _ = require('lodash');
 
-    var extensions = { elasticsearch: elasticsearch },
+    var extensions = { /*elasticsearch: elasticsearch*/ },
         windows = { };
 
     app.on('ready', function() {

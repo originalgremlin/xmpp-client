@@ -3,31 +3,10 @@
         elasticsearch = require('elasticsearch'),
         fs = require('fs'),
         path = require('path'),
-        spawn = require('child_process').spawn,
         _ = require('lodash');
 
-    var server = null,
-        client = null,
+    var client = null,
         watcher = null;
-
-    /*** elasticsearch server ***/
-    var cmd = (process.platform === 'win32') ? './extensions/elasticsearch/bin/elasticsearch.bat' : './extensions/elasticsearch/bin/elasticsearch',
-        args = ["-Des.config=./etc/elasticsearch.yml"],
-        out = fs.createWriteStream('./var/log/elasticsearch.out', { encoding: 'utf8', flags: 'w' }),
-        err = fs.createWriteStream('./var/log/elasticsearch.err', { encoding: 'utf8', flags: 'w' });
-
-    var startServer = function() {
-        if (_.isNull(server)) {
-            server = spawn(cmd, args, {stdio: ['ignore', out, err]});
-        }
-    };
-
-    var stopServer = function() {
-        if (!_.isNull(server)) {
-            server.kill('SIGTERM');
-            server = null;
-        }
-    };
 
     /*** elasticsearch client ***/
     var index = 'aerofs',
@@ -151,7 +130,6 @@
 
     module.exports = {
         start: function() {
-            startServer();
             startClient();
             startWatcher();
         },
@@ -159,7 +137,6 @@
         stop: function() {
             stopWatcher();
             stopClient();
-            stopServer();
         }
     };
 })();

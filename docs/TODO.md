@@ -6,13 +6,10 @@
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
-* i18n
-    can work in main process? how do we detect user language?
+* can i18n work in main process? how do we detect user language?
 * more serious routing
-* Settings
-  does localStorage persist across invocations?
+* Settings (localStorage does persist)
 * initial file dump in chokidar sucks.  how do we buffer indexing on startup?
     or really, how do we index the files one time on first launch then ignore them?
 * write file search component
-* redirect all install script output to a file, rather than redirect commands one by one
-    http://stackoverflow.com/questions/3173131/redirect-copy-of-stdout-to-log-file-from-within-bash-script-itself
+* create ES file index and mapping in install script
