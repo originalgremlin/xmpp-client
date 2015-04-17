@@ -97,13 +97,13 @@ var actions = {
                             size: job.stats.size,
                             createdAt: job.stats.birthtime,
                             modifiedAt: job.stats.mtime,
-                            attachment: new Buffer(data, 'binary').toString('base64')
+                            file: new Buffer(data, 'binary').toString('base64')
                         },
                         // update
                         doc: {
                             size: job.stats.size,
                             modifiedAt: job.stats.mtime,
-                            attachment: new Buffer(data, 'binary').toString('base64')
+                            file: new Buffer(data, 'binary').toString('base64')
                         }
                     }
                 }, function(err, response, status) {

@@ -10,3 +10,12 @@
 * more serious routing
 * Settings (localStorage does persist)
 * write file search component
+   good query: 
+   {
+     "query": {
+       "multi_match" : {
+         "query": "dog", 
+         "fields": ["file", "path"]
+       }
+     }
+   }

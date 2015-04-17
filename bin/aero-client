@@ -104,30 +104,16 @@ case "$1" in
             echo
             # create initial index and mapping
             curl -XPOST 'http://localhost:9200/aerofs/' -d '{
-                "settings": {
-                    "index": {
-                        "analysis": {
-                            "analyzer": {
-                                "path_analyzer": {
-                                    "tokenizer": "path_hierarchy"
-                                }
-                            }
-                        }
-                    }
-                },
                 "mappings": {
                     "file": {
                         "_source": {
-                            "excludes": ["attachment"]
+                            "excludes": ["file"]
                         },
                         "properties": {
-                            "attachment": { "type": "attachment", "store": false },
+                            "file": { "type": "attachment", "store": false },
                             "createdAt": { "type": "date", "format" : "dateOptionalTime" },
                             "modifiedAt": { "type": "date", "format" : "dateOptionalTime" },
-                            "path": {
-                                "type": "string",
-                                "analyzer": "path_analyzer"
-                            },
+                            "path": { "type": "string" },
                             "size": { "type": "long" }
                         }
                     }
