@@ -13,7 +13,7 @@
         render: function() {
             return (
                 <div className="file-explorer">
-                    <FileTree refs="fileTree" root={ this.props.query.root } handleFileItemClick={ this.handleFileItemClick } />
+                    <FileTree refs="fileTree" root={ this.props.root } handleFileItemClick={ this.handleFileItemClick } />
                     <FileViewer ref="fileViewer" />
                 </div>
             );

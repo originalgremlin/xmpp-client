@@ -4,6 +4,11 @@
     var fs = require('fs'),
         path = require('path'),
         React = require('react'),
+        Router = require('react-router'),
+        Route = Router.Route,
+        DefaultRoute = Router.DefaultRoute,
+        RouteHandler = Router.RouteHandler,
+        Nav = require('./build/scripts/components/nav.js'),
         ChatClient = require('./build/scripts/components/chat-client.js'),
         FileExplorer = require('./build/scripts/components/file-explorer.js'),
         FileSearch = require('./build/scripts/components/file-search.js'),
@@ -17,26 +22,18 @@
     var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
         aero = path.join(home, 'AeroFS'),
         root = fs.existsSync(aero) ? aero : home;
-
-    var Router = require('react-router'),
-        DefaultRoute = Router.DefaultRoute,
-        Link = Router.Link,
-        Route = Router.Route,
-        RouteHandler = Router.RouteHandler;
+    var FileExplorerWrapper = React.createClass({
+        render: function() {
+            return <FileExplorer root={ root } />
+        }
+    });
 
     var App = React.createClass({
         render: function() {
             return (
                 <div>
-                    <header>
-                        <ul>
-                            <li><Link to="Explore" query={{ root: root }}>Explore</Link></li>
-                            <li><Link to="Search">Search</Link></li>
-                            <li><Link to="Chat">Chat</Link></li>
-                            <li><Link to="Settings">Settings</Link></li>
-                        </ul>
-                    </header>
-                    <RouteHandler {...this.props} />
+                    <Nav />
+                    <RouteHandler />
                 </div>
             );
         }
@@ -44,16 +41,15 @@
 
     var routes = (
         <Route name="App" handler={ App } path={ "/" }>
-            <Route name="Explore" handler={ FileExplorer } />
+            <Route name="Explore" handler={ FileExplorerWrapper } />
             <Route name="Search" handler={ FileSearch } />
             <Route name="Chat" handler={ ChatClient } />
             <Route name="Settings" handler={ Settings } />
-            <DefaultRoute handler={ FileExplorer }/>
+            <DefaultRoute handler={ FileExplorer } />
         </Route>
     );
 
     Router.run(routes, Router.HashLocation, function (Handler, state) {
-        console.log(state);
-        React.render(<Handler params={ state.params } query={ state.query } />, document.body);
+        React.render(<Handler />, document.body);
     });
 })();
