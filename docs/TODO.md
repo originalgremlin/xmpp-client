@@ -19,3 +19,4 @@
        }
      }
    }
+* instead of limiting indexing of files to a max size, just index the first N bytes of a given file
