@@ -17,6 +17,7 @@
         ChatClient = require('./build/scripts/components/chat-client.js'),
         FileExplorer = require('./build/scripts/components/file-explorer.js'),
         FileSearch = require('./build/scripts/components/file-search.js'),
+        Login = require('./build/scripts/components/login.js'),
         Nav = require('./build/scripts/components/nav.js'),
         PropsWrapper = require('./build/scripts/util/props-wrapper.js'),
         Settings = require('./build/scripts/components/settings.js');
@@ -51,6 +52,7 @@
             <Route name="Search" handler={ FileSearch } />
             <Route name="Chat" handler={ ChatClient } />
             <Route name="Settings" handler={ Settings } />
+            <Route name="Login" handler={ Login } />
             <DefaultRoute handler={ PropsWrapper(FileExplorer, { root: root }) } />
         </Route>
     );
