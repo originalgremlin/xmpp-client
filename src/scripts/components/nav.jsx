@@ -1,23 +1,13 @@
 (function(undefined) {
     'use strict';
 
-    var fs = require('fs'),
-        path = require('path'),
-        React = require('react'),
-        Router = require('react-router'),
-        DefaultRoute = Router.DefaultRoute,
-        Link = Router.Link,
-        Route = Router.Route,
-        RouteHandler = Router.RouteHandler;
-
-    var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-        aero = path.join(home, 'AeroFS'),
-        root = fs.existsSync(aero) ? aero : home;
+    var React = require('react'),
+        Link = require('react-router').Link;
 
     var Nav = React.createClass({
         render: function() {
             return (
-                <header>
+                <header className="nav">
                     <ul>
                         <li><Link to="Explore">Explore</Link></li>
                         <li><Link to="Search">Search</Link></li>

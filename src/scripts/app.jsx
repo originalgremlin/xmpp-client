@@ -1,37 +1,40 @@
 (function(undefined) {
     'use strict';
 
+    //----------------------------------------------
+    // node utils
     var fs = require('fs'),
-        path = require('path'),
-        React = require('react'),
-        Router = require('react-router'),
+        path = require('path');
+
+    // routing
+    var Router = require('react-router'),
         Route = Router.Route,
         DefaultRoute = Router.DefaultRoute,
-        RouteHandler = Router.RouteHandler,
-        Nav = require('./build/scripts/components/nav.js'),
+        RouteHandler = Router.RouteHandler;
+
+    // components
+    var React = require('react'),
         ChatClient = require('./build/scripts/components/chat-client.js'),
         FileExplorer = require('./build/scripts/components/file-explorer.js'),
         FileSearch = require('./build/scripts/components/file-search.js'),
-        Settings = require('./build/scripts/components/settings.js'),
-        i18n = require('./build/scripts/util/i18n.js'),
+        Nav = require('./build/scripts/components/nav.js'),
+        PropsWrapper = require('./build/scripts/util/props-wrapper.js'),
+        Settings = require('./build/scripts/components/settings.js');
+
+    // utilities
+    var i18n = window.i18n = require('./build/scripts/util/i18n.js'),
         _ = require('lodash');
+
+    // development
     require('./build/scripts/util/devtools.js');
     require('./build/scripts/util/atom-watcher.js');
-    window.i18n = i18n;
 
-    var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-        aero = path.join(home, 'AeroFS'),
-        root = fs.existsSync(aero) ? aero : home;
-    var FileExplorerWrapper = React.createClass({
-        render: function() {
-            return <FileExplorer root={ root } />
-        }
-    });
-
+    //----------------------------------------------
+    // app
     var App = React.createClass({
         render: function() {
             return (
-                <div>
+                <div id="app">
                     <Nav />
                     <RouteHandler />
                 </div>
@@ -39,17 +42,19 @@
         }
     });
 
+    var home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
+        aero = path.join(home, 'AeroFS'),
+        root = fs.existsSync(aero) ? aero : home;
     var routes = (
-        <Route name="App" handler={ App } path={ "/" }>
-            <Route name="Explore" handler={ FileExplorerWrapper } />
+        <Route name="App" handler={ App } path={ '/' }>
+            <Route name="Explore" handler={ PropsWrapper(FileExplorer, { root: root }) } />
             <Route name="Search" handler={ FileSearch } />
             <Route name="Chat" handler={ ChatClient } />
             <Route name="Settings" handler={ Settings } />
-            <DefaultRoute handler={ FileExplorer } />
+            <DefaultRoute handler={ PropsWrapper(FileExplorer, { root: root }) } />
         </Route>
     );
-
-    Router.run(routes, Router.HashLocation, function (Handler, state) {
+    Router.run(routes, Router.HashLocation, function (Handler) {
         React.render(<Handler />, document.body);
     });
 })();

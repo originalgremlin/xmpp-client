@@ -7,7 +7,6 @@
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
 * can i18n work in main process? how do we detect user language?
-* more serious routing
 * Settings (localStorage does persist)
 * write file search component
    good query: 
