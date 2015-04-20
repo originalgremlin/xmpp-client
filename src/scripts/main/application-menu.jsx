@@ -2,6 +2,7 @@
     'use strict';
 
     var app = require('app'),
+        i18n = require('../util/i18n.js'),
         BrowserWindow = require('browser-window'),
         Menu = require('menu');
 
@@ -9,56 +10,56 @@
         create: function() {
             Menu.setApplicationMenu(Menu.buildFromTemplate([
                 {
-                    label: 'Atom Shell',
+                    label: i18n.t('Atom Shell'),
                     submenu: [
                         {
-                            label: 'About Atom Shell',
+                            label: i18n.t('About Atom Shell'),
                             selector: 'orderFrontStandardAboutPanel:'
                         },
                         {
                             type: 'separator'
                         },
                         {
-                            label: 'Services',
+                            label: i18n.t('Services'),
                             submenu: []
                         },
                         {
                             type: 'separator'
                         },
                         {
-                            label: 'Hide Atom Shell',
+                            label: i18n.t('Hide Atom Shell'),
                             accelerator: 'Command+H',
                             selector: 'hide:'
                         },
                         {
-                            label: 'Hide Others',
+                            label: i18n.t('Hide Others'),
                             accelerator: 'Command+Shift+H',
                             selector: 'hideOtherApplications:'
                         },
                         {
-                            label: 'Show All',
+                            label: i18n.t('Show All'),
                             selector: 'unhideAllApplications:'
                         },
                         {
                             type: 'separator'
                         },
                         {
-                            label: 'Quit',
+                            label: i18n.t('Quit'),
                             accelerator: 'Command+Q',
                             click: function() { app.quit(); }
                         }
                     ]
                 },
                 {
-                    label: 'Edit',
+                    label: i18n.t('Edit'),
                     submenu: [
                         {
-                            label: 'Undo',
+                            label: i18n.t('Undo'),
                             accelerator: 'Command+Z',
                             selector: 'undo:'
                         },
                         {
-                            label: 'Redo',
+                            label: i18n.t('Redo'),
                             accelerator: 'Shift+Command+Z',
                             selector: 'redo:'
                         },
@@ -66,52 +67,52 @@
                             type: 'separator'
                         },
                         {
-                            label: 'Cut',
+                            label: i18n.t('Cut'),
                             accelerator: 'Command+X',
                             selector: 'cut:'
                         },
                         {
-                            label: 'Copy',
+                            label: i18n.t('Copy'),
                             accelerator: 'Command+C',
                             selector: 'copy:'
                         },
                         {
-                            label: 'Paste',
+                            label: i18n.t('Paste'),
                             accelerator: 'Command+V',
                             selector: 'paste:'
                         },
                         {
-                            label: 'Select All',
+                            label: i18n.t('Select All'),
                             accelerator: 'Command+A',
                             selector: 'selectAll:'
                         }
                     ]
                 },
                 {
-                    label: 'View',
+                    label: i18n.t('View'),
                     submenu: [
                         {
-                            label: 'Reload',
+                            label: i18n.t('Reload'),
                             accelerator: 'Command+R',
                             click: function() { BrowserWindow.getFocusedWindow().reloadIgnoringCache(); }
                         },
                         {
-                            label: 'Toggle DevTools',
+                            label: i18n.t('Toggle DevTools'),
                             accelerator: 'Alt+Command+I',
                             click: function() { BrowserWindow.getFocusedWindow().toggleDevTools(); }
                         }
                     ]
                 },
                 {
-                    label: 'Window',
+                    label: i18n.t('Window'),
                     submenu: [
                         {
-                            label: 'Minimize',
+                            label: i18n.t('Minimize'),
                             accelerator: 'Command+M',
                             selector: 'performMiniaturize:'
                         },
                         {
-                            label: 'Close',
+                            label: i18n.t('Close'),
                             accelerator: 'Command+W',
                             selector: 'performClose:'
                         },
@@ -119,13 +120,13 @@
                             type: 'separator'
                         },
                         {
-                            label: 'Bring All to Front',
+                            label: i18n.t('Bring All to Front'),
                             selector: 'arrangeInFront:'
                         }
                     ]
                 },
                 {
-                    label: 'Help',
+                    label: i18n.t('Help'),
                     submenu: []
                 }
             ]));

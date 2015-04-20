@@ -6,16 +6,10 @@
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
-* can i18n work in main process? how do we detect user language?
-* more serious routing
-* Settings (localStorage does persist)
-* write file search component
-   good query: 
-   {
-     "query": {
-       "multi_match" : {
-         "query": "dog", 
-         "fields": ["file", "path"]
-       }
-     }
-   }
+* compass stopped compiling on my work computer? something about elasticsearch styles?
+
+* Login/logout logic
+* highlight matched text in searches to give context
+* paging search results with infinite scroll
+* connect chat client
+* basic interface with groups and multiple conversations

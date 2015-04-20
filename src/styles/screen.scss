@@ -2,8 +2,10 @@
 @import "compass/reset";
 
 // components
-@import "components/file-explorer";
 @import "components/chat-client";
+@import "components/file-explorer";
+@import "components/file-search";
+@import "components/nav";
 
 // app
 body {
@@ -17,18 +19,4 @@ body {
 #app {
     height: 100vh;
     width: 100vw;
-}
-
-#file-explorer {
-    display: inline-block;
-    float: left;
-    height: 100%;
-    width: 80%;
-}
-
-#chat-client {
-    display: inline-block;
-    float: left;
-    height: 100%;
-    width: 20%;
 }

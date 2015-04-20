@@ -1,0 +1,61 @@
+@import "file-tree";
+@import "file-viewer";
+
+.file-search {
+    height: 100%;
+    width: 100%;
+
+    .search-explorer {
+        height: 100%;
+        width: 100%;
+    }
+
+    .search-results {
+        height: 100%;
+        width: 50%;
+        display: inline-block;
+
+        .header {
+            background-color: #99FBB3;
+            border: 1px solid #000000;
+            font-weight: bold;
+            padding: $padding;
+            position: fixed;
+            width: calc(50% - 12px);
+        }
+
+        .placeholder {
+            padding: $padding;
+            border: 1px solid #000000;
+            visibility: hidden;
+        }
+
+        span {
+            display: inline-block;
+            width: 50%;
+        }
+
+        ul {
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+
+            li.search-result {
+                background-color: #8ed0cc;
+                border: 1px solid #000000;
+                padding: 5px;
+
+                :hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .file-viewer {
+        display: inline-block;
+        height: 100%;
+        width: 50%;
+        overflow: hidden;
+    }
+}

@@ -19,7 +19,6 @@
             'min-width': 800,
             'min-height': 600,
             title: 'AeroIM',
-            icon: './src/images/main/icon.png',
             type: 'desktop'
         });
         windows.main.loadUrl('file://' + __dirname + '/index.html');

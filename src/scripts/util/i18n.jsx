@@ -10,9 +10,23 @@
         console.warn(util.format('I18N WARNING (%s): %s', locale, message));
     };
 
+    var getLocale = function(defaultLocale) {
+        if (typeof navigator !== 'undefined') {
+            return navigator.language;
+        } else if (typeof process !== 'undefined') {
+            return process.env.LANG.replace('_', '-').split('.')[0];
+        } else {
+            return defaultLocale;
+        }
+    };
+
+    var getLocales = function (locale, defaultLocale) {
+        return _.uniq([defaultLocale, locale.split('-')[0], locale]);
+    };
+
     var defaultLocale = 'en',
-        locale = navigator.userLanguage || navigator.languages[0] || navigator.language,
-        locales = _.uniq([defaultLocale, locale.split('-')[0], locale]),
+        locale = getLocale(defaultLocale),
+        locales = getLocales(locale, defaultLocale),
         polyglot = new Polyglot({ locale: locale, warn: warn });
 
     locales.forEach(function (locale) {
