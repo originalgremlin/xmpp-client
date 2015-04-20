@@ -8,5 +8,5 @@
 * kill Atom.app, node-inspector on script "stop"
 * can i18n work in main process? how do we detect user language?
 * Settings (localStorage does persist)
-* instead of limiting indexing of files to a max size, just index the first N bytes of a given file
 * Login/logout logic
+* highlight matched text in searches to give context

@@ -80,12 +80,20 @@ var actions = {
     },
 
     upsert: function (job) {
-        fs.readFile(job.path, function(err, data) {
+        fs.open(job.path, 'r', function(err, fd) {
             if (err) {
                 actions.finish(job, err, null);
-            } else if (data.length > MAX_SIZE) {
-                actions.finish(job, null, { path: job.path, size: data.length, message: 'File too large to index.'});
-            } else {
+                return;
+            } else if (job.stats.size < 1) {
+                return;
+            }
+            var size = Math.min(job.stats.size, MAX_SIZE),
+                buffer = new Buffer(size);
+            fs.read(fd, buffer, 0, size, 0, function (err, bytesRead, buffer) {
+                if (err) {
+                    actions.finish(job, err, null);
+                    return;
+                }
                 client.update({
                     index: index,
                     type: type,
@@ -97,19 +105,19 @@ var actions = {
                             size: job.stats.size,
                             createdAt: job.stats.birthtime,
                             modifiedAt: job.stats.mtime,
-                            file: new Buffer(data, 'binary').toString('base64')
+                            file: buffer.toString('base64')
                         },
                         // update
                         doc: {
                             size: job.stats.size,
                             modifiedAt: job.stats.mtime,
-                            file: new Buffer(data, 'binary').toString('base64')
+                            file: buffer.toString('base64')
                         }
                     }
-                }, function(err, response, status) {
+                }, function (err, response, status) {
                     actions.finish(job, err, response);
                 });
-            }
+            });
         });
     },
 
