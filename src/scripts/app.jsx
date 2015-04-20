@@ -4,7 +4,8 @@
     //----------------------------------------------
     // node utils
     var fs = require('fs'),
-        path = require('path');
+        path = require('path')
+        _ = require('lodash');
 
     // routing
     var Router = require('react-router'),
@@ -53,10 +54,11 @@
             <Route name="Chat" handler={ ChatClient } />
             <Route name="Settings" handler={ Settings } />
             <Route name="Login" handler={ Login } />
-            <DefaultRoute handler={ PropsWrapper(FileExplorer, { root: root }) } />
+            <DefaultRoute name="AeroFS" handler={ PropsWrapper(FileExplorer, { root: root }) } />
         </Route>
     );
-    Router.run(routes, Router.HashLocation, function (Handler) {
+    Router.run(routes, Router.HashLocation, function (Handler, state) {
         React.render(<Handler />, document.body);
+        document.title = _.last(state.routes).name || 'AeroFS';
     });
 })();
