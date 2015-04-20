@@ -8,7 +8,7 @@ case "$1" in
     gather)
         echo "{" > "${TEMPLATE_FILE}"
         grep -e "i18n.t('.*')" -h -o -r "${SCRIPTS_DIR}" |
-            sed -e "s/i18n.t('\(.*\)')/    \"\1\": \"\",/" |
+            sed -e "s/i18n.t('\(.*\)')/    \"\1\": \"\1\",/" |
             sort -u >> "${TEMPLATE_FILE}"
         echo '    "": ""' >> "${TEMPLATE_FILE}"
         echo "}" >> "${TEMPLATE_FILE}"
