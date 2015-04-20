@@ -12,8 +12,12 @@
             root: React.PropTypes.string.isRequired
         },
 
+        getDefaultProps: function() {
+            return { handleFileItemClick: function(){} };
+        },
+
         componentWillMount: function() {
-            this.handleFileItemClick = this.props.handleFileItemClick || function(){};
+            this.handleFileItemClick = this.props.handleFileItemClick;
         },
 
         render: function() {

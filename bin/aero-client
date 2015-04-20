@@ -161,14 +161,14 @@ case "$1" in
         # start jsx compilation
         if ! is_running jsx; then
             echo "Starting jsx compilation..."
-            "${BIN_DIR}/jsx" --extension jsx --watch "${SRC_DIR}" "${BUILD_DIR}" >"${LOG_DIR}/jsx.out" 2>"${LOG_DIR}/jsx.err" &
+            "${BIN_DIR}/jsx" --extension jsx --harmony --watch "${SRC_DIR}" "${BUILD_DIR}" >"${LOG_DIR}/jsx.out" 2>"${LOG_DIR}/jsx.err" &
             echo $! > "${PID_DIR}/jsx.pid"
         fi
 
         # start sass/compass compilation
         if ! is_running compass; then
             echo "Starting compass compilation..."
-            compass watch --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" --config "${ETC_DIR}/compass.rb" >"${LOG_DIR}/compass.out" 2>"${LOG_DIR}/compass.err" &
+            compass watch --sass-dir "${SRC_DIR}/styles" --css-dir "${BUILD_DIR}/styles" --javascripts-dir "${BUILD_DIR}/scripts" --images-dir "${SRC_DIR}/images" --config "${ETC_DIR}/compass.rb" --trace >"${LOG_DIR}/compass.out" 2>"${LOG_DIR}/compass.err" &
             echo $! > "${PID_DIR}/compass.pid"
         fi
 

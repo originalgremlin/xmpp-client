@@ -6,7 +6,10 @@
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
-* Settings (localStorage does persist, nevertheless it is probably better to save settings to a file)
+* compass stopped compiling on my work computer? something about elasticsearch styles?
+
 * Login/logout logic
 * highlight matched text in searches to give context
-* paging search results
+* paging search results with infinite scroll
+* connect chat client
+* basic interface with groups and multiple conversations
