@@ -7,6 +7,11 @@
         _ = require('lodash');
 
     var FileTree = React.createClass({
+        propTypes: {
+            handleFileItemClick: React.PropTypes.func,
+            root: React.PropTypes.string.isRequired
+        },
+
         componentWillMount: function() {
             this.handleFileItemClick = this.props.handleFileItemClick || function(){};
         },

@@ -6,6 +6,7 @@
 * fix problems with dyld.  common with many versions of node.  not on my personal laptop, though
     dyld: lazy symbol binding failed: Symbol not found: _node_module_register
 * kill Atom.app, node-inspector on script "stop"
-* Settings (localStorage does persist)
+* Settings (localStorage does persist, nevertheless it is probably better to save settings to a file)
 * Login/logout logic
 * highlight matched text in searches to give context
+* paging search results

@@ -6,6 +6,10 @@
         FileViewer = require('./file-viewer.js');
 
     var FileExplorer = React.createClass({
+        propTypes: {
+            root: React.PropTypes.string.isRequired
+        },
+
         handleFileItemClick: function(fileItem) {
             this.refs.fileViewer.setSource('file://' + fileItem.props.path);
         },

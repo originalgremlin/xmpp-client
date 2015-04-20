@@ -39,6 +39,10 @@
     });
 
     var SearchResults = React.createClass({
+        getDefaultProps: function() {
+            return { query: '' };
+        },
+
         componentWillMount: function() {
             this.setState({ client: new Elasticsearch.Client(), results: [] });
         },
@@ -51,7 +55,7 @@
                 body: {
                     'query': {
                         'multi_match' : {
-                            'query': props.query || '',
+                            'query': props.query,
                             'fields': ['file', 'path']
                         }
                     }
