@@ -19,8 +19,7 @@
         render: function() {
             return (
                 <form className="message-form" onSubmit={ this.handleSubmit }>
-                    <textarea name="body" rows="4" />
-                    <button type="submit">{ i18n.t('Submit') }</button>
+                    <input name="body" />
                 </form>
             );
         }
